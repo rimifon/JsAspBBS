@@ -8,6 +8,6 @@
 * 演示地址：[JsAspBBS](http://bbs.fengyun.org)
 * 下载链接：[花了两天时间开发了一个论坛程序](http://bbs.fengyun.org/?r=topic/3)
 
-Microsoft SQL Server Compact，即 SQL CE，也叫 SQL Lite，其SQL语法是 SQL Server 的子集，所以开发代码可无缝迁移至 SQL Server。  
+Microsoft SQL Server Compact，即 SQL CE，也叫 SQL Lite，其SQL语法是 SQL Server 的子集，所以后续可无缝迁移至 SQL Server 而几乎不需要修改代码。  
 Windows Server 2012|2016|2019 内置此驱动，而且同时支持 32位和64位，是替代 Access 数据库一个不错的选择。  
 其他操作系统有可能需要安装 SqlCe 4.0 才支持。
