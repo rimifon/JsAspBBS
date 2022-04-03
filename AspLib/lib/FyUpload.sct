@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+<?component error="false" debug="false"?>
+<comment>
+<![CDATA[
+	風雲ASP上传组件（纯Javascript的ASP文件上传组件）
+	Author: Rimifon
+	LastModify: 14:44 2009-02-21
+	NextModify: 09:55 2021-03-25
+]]></comment>
+<scriptlet id="Upload">
+<registration clsid="{12345678-aabb-ccdd-eeff-012345678900}" progid="Rimifon.Upload" version="3.4" description="風雲ASP上传组件" />
+<public>
+	<property name="Name" dispid="0"><get internalName="ProductName" /></property>
+	<property name="Filter" />
+	<property name="MaxSize" />
+	<property name="Field" />
+	<property name="Charset" />
+	<method name="ReadForm">
+		<parameter name="ReadSize" />
+		<parameter name="ProgID" />
+	</method>
+	<method name="SaveFile">
+		<parameter name="SavePath" />
+	</method>
+	<method name="AspTest">
+		<parameter name="Sender" />
+	</method>
+	<method name="Form">
+		<parameter name="Element" />
+	</method>
+	<method name="EnsurePath">
+		<parameter name="path" />
+		<parameter name="root" />
+	</method>
+	<method name="Dispose" />
+</public>
+<implements type="ASP" />
+<script language="Javascript">
+<![CDATA[
+var AspOnly = "本组件仅用于ASP页面。";
+var Charset = "gb2312";
+var Rule, Field, Stream, Nothing;
+var GetFileBody = MaxSize = 0;
+var TempField = LastData = "";
+var Filter = "rar|zip|txt|gif|jpg|bmp|htm|html|swf|mht";
+function ProductName()
+{
+	return "風雲ASP上传组件";
+}
+function ReadForm(ReadSize, ProgID)
+{
+	Field = new Array;
+	if(!this.Server) return AspOnly;
+	Rule = Request.ServerVariables("Http_Content_Type").Item;
+	if(!Rule || Rule.indexOf("multipart/form-data")) return TextForm();
+	Rule = "--" + Rule.split("=")[1];
+	Rule = Rule.replace(/[\x00-\xff]/g,
+		function($1)
+		{
+			return "%" + $1.charCodeAt(0).toString(16).toUpperCase();
+		});
+	var TotalBytes = Request.TotalBytes;
+	if(ReadSize === Nothing) ReadSize = 200000;
+	if(ReadSize % 2) ReadSize += 1;
+	if(!ReadSize || ReadSize > TotalBytes) ReadSize = TotalBytes;
+	var ReadBytes = 0;
+	if(!Stream)Stream = Server.CreateObject("Adodb.Stream");
+	while(ReadBytes < TotalBytes && Response.IsClientConnected())
+	{
+		ReadBytes += ReadSize;
+		if(ReadBytes > TotalBytes)
+		{
+			ReadSize = ReadSize + TotalBytes - ReadBytes;
+			ReadBytes = TotalBytes;
+		}
+		if(ProgID)
+		{
+			Application.Lock();
+			Application.Contents(ProgID + "_TotalBytes") = TotalBytes;
+			Application.Contents(ProgID + "_ReadBytes") = ReadBytes;
+			Application.Unlock();
+		}
+		LastData += EncodeChar(BinToStr(Request.BinaryRead(ReadSize)));
+		if(LastData.length < Rule.length) continue;
+		if(!GetFileBody && LastData.indexOf(Rule) > -1)
+		{
+			GetFullData();
+		}
+		else
+		{
+			if(!GetFileBody && LastData.indexOf("%0D%0A%0D%0A") > 0)
+			{
+
+				var fieldBody = unescape(LastData.replace(/%(\w{2})%(\w{2})/g, "%u$2$1"));
+				fieldBody = BinToStr(fieldBody, Charset).split("\r\n\r\n")[0];
+				var mimeType = fieldBody.match(/Type: (.*)$/);
+				if(mimeType)
+				{
+					var filePath = fieldBody.match(/ filename="(.*?)"/);
+					TempField = fieldBody.match(/ name="(.*?)"/)[1];
+					Field[TempField] = new FormField;
+					Field[TempField].FileType = mimeType[1];
+					Field[TempField].FilePath = filePath[1];
+					Field[TempField].SourceName = filePath[1].match(/([^\/\\]*?)$/)[1];
+					Field[TempField].FileSize = 0;
+					LastData = LastData.replace(/^(.*?)%0D%0A%0D%0A/,"");
+					Field[TempField].Value = new Array;
+					GetFileBody = 1;
+				}
+			}
+			else if(GetFileBody)
+			{
+				if(LastData.length < Rule.length + 6) continue;
+				if(LastData.indexOf("%0D%0A" + Rule) < 0)
+				{
+					var uniChar = LastData.slice(0, 0 - Rule.length - 6);
+					if(uniChar.length % 6) uniChar = uniChar.slice(0, -3);
+					Field[TempField].FileSize += uniChar.length;
+					if(!MaxSize || Field[TempField].FileSize/3 <= MaxSize)
+						Field[TempField].Value.push(unescape(uniChar.replace(/%(\w{2})%(\w{2})/g,"%u$2$1")));
+					LastData = LastData.replace(uniChar, "");
+				}
+				else
+				{
+					var uniChar = LastData.split("%0D%0A" + Rule)[0];
+					Field[TempField].FileSize += uniChar.length;
+					LastData = LastData.replace(uniChar, "");
+					if(!MaxSize || Field[TempField].FileSize/3 <= MaxSize)
+					{
+						Field[TempField].Value.push(unescape(uniChar.replace(/%(\w{2})%(\w{2})/g,"%u$2$1")));
+						Field[TempField].Value = Field[TempField].Value.join("");
+					}
+					else
+					{
+						Field[TempField].Value = "文件太大";
+					}
+					Field[TempField].FileSize = Field[TempField].FileSize / 3;
+					GetFileBody = 0;
+					if(LastData.length > Rule.length && ReadBytes == TotalBytes) GetFullData();
+				}
+			}
+		}
+	}
+}
+function SaveFile(SavePath)
+{
+	if(!this.Server) return AspOnly;
+	SavePath = SavePath?SavePath.replace(/[\/\\]$/,""):".";
+	var upFilter = new RegExp("\\.(" + Filter + ")$","i");
+	for(var i in Field)
+	{
+		if(Field[i].FilePath)
+		{
+			if(!Field[i].Value)
+			{
+				Field[i].Message = "文件内容不能为空";
+				continue;
+			}
+			if(Filter && !Field[i].FilePath.match(upFilter))
+			{
+				Field[i].Message = "服务器不接受该类文档";
+				continue;
+			}
+			if(MaxSize && Field[i].FileSize > MaxSize)
+			{
+				Field[i].Message = "上传文档大小超过限制";
+				continue;
+			}
+			var filename = Field[i].SavePath;
+			if(!filename)
+			{
+				var fileExt = Field[i].FilePath.match(/\.([^\/\.\\]*)$/);
+				filename = Field[i].SaveName || MakeFileName();
+				filename += fileExt ? fileExt[0] : "";
+				Field[i].FileName = filename;
+				filename = Server.MapPath(SavePath + "\\" + filename);
+			}
+			var strCap = Field[i].Value.charCodeAt(0).toString(16);
+			while(strCap.length < 4) strCap = "0" + strCap;
+			Stream.Type = 2;
+			Stream.Charset = "latin1";
+			Stream.Open();
+			Stream.WriteText(unescape("%" + strCap.slice(2)));
+			if(Field[i].FileSize > 1)
+			{
+				Stream.WriteText(unescape("%" + strCap.slice(0, 2)));
+				Stream.Position = 0;
+				Stream.Charset = "unicode";
+				Stream.Position = 2;
+				Stream.WriteText(Field[i].Value.slice(1));
+				Stream.Position = 0;
+				Stream.Charset = "latin1";
+				Stream.Position = Field[i].FileSize;
+				Stream.SetEOS();
+			}
+			try
+			{
+				Stream.SaveToFile(filename);
+			}
+			catch(err)
+			{
+				Field[i].Message = "[" + filename + "]" + err.message;
+				continue;
+			}
+			finally
+			{
+				Stream.Close();
+			}
+			if(!Field[i].SavePath) Field[i].SavePath = filename;
+		}
+	}	
+}
+function GetFullData()
+{
+	LastData = LastData.split(Rule);
+	for(var C=0; C<LastData.length-1; C++)
+	{
+		if(LastData[C].length < 10) continue;
+		var strField = ParseData(LastData[C]);
+		Field[strField[0]] = new FormField;
+		Field[strField[0]].Value = strField[1];
+		if(strField[3])
+		{
+			Field[strField[0]].FilePath = strField[2];
+			Field[strField[0]].SourceName = strField[2].match(/([^\/\\]*?)$/)[1];
+			Field[strField[0]].FileType = strField[3];
+			var fileInfo = GetFile(LastData[C]);
+			Field[strField[0]].Value = fileInfo[0];
+			Field[strField[0]].FileSize = fileInfo[1];
+		}
+	}
+	LastData = LastData.pop();
+}
+function BinToStr(uniChar, encoding)
+{
+	Stream.Open();
+	Stream.Charset = "unicode";
+	Stream.WriteText(uniChar);
+	Stream.Position = 0;
+	if(encoding && encoding != "unicode") Stream.Charset = encoding;
+	Stream.Position = 2;
+	uniChar = Stream.ReadText();
+	Stream.Close();
+	return uniChar;
+}
+function EncodeChar(uniChar)
+{
+	uniChar = uniChar.replace(/[\x00-\xff]/g,
+		function($1)
+		{
+			$1=$1.charCodeAt(0).toString(16).toUpperCase();
+			if($1.length < 2) $1 = "0" + $1;
+			return "_00" + $1;
+		});
+	return escape(uniChar).replace(/_/g,"%u").replace(/%u(\w{2})(\w{2})/g,"%$2%$1");
+}
+function ParseData(uniChar)
+{
+	var fieldBody, fieldName, fieldValue, filePath, mimeType;
+	uniChar = unescape(uniChar.replace(/%(\w{2})%(\w{2})/g, "%u$2$1"));
+	uniChar = BinToStr(uniChar, Charset);
+	fieldBody = uniChar.split("\r\n\r\n");
+	fieldName = fieldBody[0].match(/ name="(.*?)"/)[1];
+	mimeType = fieldBody[0].match(/Type: (.*)$/);
+	filePath = fieldBody[0].match(/ filename="(.*?)"/);
+	fieldBody.shift();
+	fieldValue = fieldBody.join("\r\n\r\n").replace(/\r\n(\x00)?$/,"");
+	return [fieldName, fieldValue, filePath?filePath[1]:Nothing, mimeType?mimeType[1]:Nothing];
+}
+function GetFile(uniChar)
+{
+	uniChar = uniChar.slice(0,-6).replace(/(.*?)(%0D%0A){2}/,"");
+	var fileSize = uniChar.length / 3;
+	uniChar = unescape(uniChar.replace(/%(\w{2})%(\w{2})/g,"%u$2$1"));
+	return [uniChar, fileSize];
+}
+function MakeFileName()
+{
+	var time = new Date;
+	var arrName = new Array;
+	arrName.push(time.getYear().toString().substr(2,2));
+	arrName.push(time.getMonth()+1);
+	arrName.push(time.getDate());
+	arrName.push(time.getHours());
+	arrName.push(time.getMinutes());
+	arrName.push(time.getSeconds());
+	arrName.push(Math.random().toString().substr(2,4));
+	return arrName.join("!").replace(/!(\d+)/g,function($0,$1){return $1>9?$1:"0"+$1});
+}
+function TextForm()
+{
+	TempField = new Enumerator(Request.Form);
+	while(!TempField.atEnd())
+	{
+		Field[TempField.item()] = new FormField;
+		Field[TempField.item()].Value = Request.Form(TempField.item()).Item;
+		TempField.moveNext();
+	}
+}
+function FormField()
+{
+	this.FileName = Nothing;
+	this.FileType = Nothing;
+	this.FilePath = Nothing;
+	this.FileSize = Nothing;
+	this.SavePath = Nothing;
+	this.SourceName = Nothing;
+	this.Message = Nothing;
+	this.Value = Nothing;
+	this.toString = new Function("return this.Value");
+}
+function Form(Element)
+{
+	return Field[Element];
+}
+function AspTest(Sender)
+{
+	if(!this.Server && Sender.Server)
+	{
+		this.Server = Sender.Server;
+		this.Request = Sender.Request;
+		this.Response = Sender.Response;
+		this.Application = Sender.Application;
+	}
+}
+// 确保目录存在
+function EnsurePath(path, root) {
+	// 可能开始目录是虚拟目录，所以需要特殊指定
+	if(!root) root = ".";
+	root = (root + "/").replace(/\/+$/, "/");
+	var arr = path.split(/[\/\\]/g);
+	if(path.charAt(0) == "/") root = "/";
+	var dir = Server.MapPath(root);
+	var fso = new ActiveXObject("Scripting.FileSystemObject");
+	while(arr.length) {
+		dir += "\\" + arr.shift();
+		if(!fso.folderExists(dir)) fso.createFolder(dir);
+	}
+}
+function Dispose()
+{
+	Field = Stream = Nothing;
+	CollectGarbage();
+}
+]]>
+</script>
+</scriptlet>
+</package>

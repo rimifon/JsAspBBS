@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<package>
+	<scriptlet>
+		<public>
+			<property name="libName" dispid="0" />
+			<method name="dec">
+				<parameter name="data" />
+				<parameter name="key" />
+				<parameter name="iv" />
+			</method>
+		</public>
+		<script language="javascript"><![CDATA[
+// AES-128-CBC 解密
+function dec(data, key, iv) {
+	aes.Key = base64ToBin(key);
+	aes.IV = base64ToBin(iv);
+	var bin = base64ToBin(data);
+	return utf.GetString(aes.CreateDecryptor().TransformFinalBlock(bin, 0, getBinLen(bin)));
+};
+
+// Base64 转二进制
+function base64ToBin(str) {
+	toBin.text = str;
+	return toBin.nodeTypedValue;
+}
+
+// 获取二进制长度
+function getBinLen(bin) {
+	toHex.nodeTypedValue = bin;
+	return toHex.text.length / 2;
+}
+
+var libName = "AES-128-CBC (PKCS#7) Decryptor";
+var xml = new ActiveXObject("Microsoft.XmlDom");
+var toBin = xml.createElement("base64");
+toBin.dataType = "bin.base64";
+var toHex = xml.createElement("hex");
+toHex.dataType = "bin.hex";
+var aes = new ActiveXObject("System.Security.Cryptography.RijndaelManaged");
+var utf = new ActiveXObject("System.Text.UTF8Encoding");
+		]]></script>
+	</scriptlet>
+</package>

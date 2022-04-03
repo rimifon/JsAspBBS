@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<package>
+	<scriptlet>
+		<public>
+			<property name="libName" dispid="0" />
+			<property name="charset" />
+			<method name="readText">
+				<parameter name="fileName" />
+			</method>
+			<method name="writeText">
+				<parameter name="fileName" />
+				<parameter name="text" />
+			</method>
+		</public>
+		<implements type="ASP" />
+		<script language="javascript"><![CDATA[
+var libName = "文件读写";
+var charset = "UTF-8";
+var stm = new ActiveXObject("Adodb.Stream");
+// 读文件
+function readText(fileName) {
+	return openFile(function() {
+		stm.LoadFromFile(Server.MapPath(fileName));
+		return stm.ReadText();
+	});
+}
+// 写文件
+function writeText(fileName, text) {
+	openFile(function() {
+		stm.WriteText(text);
+		stm.SaveToFile(Server.MapPath(fileName), 2);
+	});
+}
+// 文件操作封装
+function openFile(func) {
+	stm.Type = 2;
+	stm.Charset = charset;
+	stm.Open();
+	try { return func(); }
+	catch(err) { return; }
+	finally { stm.Close(); }
+}
+		]]></script>
+	</scriptlet>
+</package>
