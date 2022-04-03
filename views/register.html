@@ -1,8 +1,18 @@
 <style type="text/css">
+@media screen and (min-width: 721px) {
 .main{ padding: 1in }
 .main .form{ width: 4in; margin: 0mm auto }
 .main .form span{ width: 1in; border-right: var(--bd); background-color: var(--bg); line-height: 1cm; text-align: right; padding-right: 2mm }
 .main .form p{ margin: 0mm 0mm 0mm 3cm; padding: 2mm }
+}
+@media screen and (max-width: 720px){
+.main .bd{ border-left: none; border-right: none }
+.form .fl{ padding: 1vw 2vw; border-right: var(--bd); background-color: #eee; width: 20vw; height: 6vw }
+.form p{ border-left: var(--bd); padding: 1vw 2vw; margin: 0mm 0mm 0mm 24vw; height: 6vw }
+.form p *{ border: none; width: 100%; vertical-align: middle; outline: none; font: 4vw/6vw arial }
+.form p textarea{ height: 20vw }
+.main .tc input{ font: 4vw/6vw arial; padding: 1vw 4vw }
+}
 </style>
 <div class="pos mt bd"><a href="."><%= sys.name %></a> → 新用户注册</div>
 <div class="mt bd">

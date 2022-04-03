@@ -1,5 +1,6 @@
 <!doctype html><html lang="zh"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width" />
 <title><%= sys.title %><%= sys.name %></title>
 <style type="text/css">
 img{ vertical-align: middle }
@@ -14,7 +15,7 @@ body{ --bd: 1px solid #4d76b3; --bg: #f3f6fa }
 a{ color: #000; text-decoration: none }
 .ellipsis{ overflow: hidden; white-space: nowrap; text-overflow: ellipsis }
 .bd{ border: var(--bd); box-sizing: border-box }
-@media screen {
+@media screen and (min-width: 721px) {
 body{ margin: 0mm 7mm; font: 4mm/6mm simsun,arial }
 .mt{ margin-top: 3mm }
 .head .banner{ background-image: url(res/bbs/toplogobg.jpg); height: 150px }
@@ -23,6 +24,19 @@ body{ margin: 0mm 7mm; font: 4mm/6mm simsun,arial }
 .bd .main{ border-top: var(--bd) }
 .pos{ padding: 1mm 3mm; background-color: var(--bg) }
 .footer, .footer a{ color: #777 }
+}
+@media screen and (max-width: 720px) {
+.for-web{ display: none }
+.pos{ margin: 2vw 1vw; padding: 0mm 2vw; border-radius: 1vw }
+body{ font: 4vw/6vw arial; margin: 0mm }
+.mt{ margin-top: 2vw }
+.head .banner{ height: 20vw; background: url(res/bbs/toplogobg.jpg) repeat-x top / 100vw 20vw }
+.head .banner img{ height: 20vw }
+.head .nav{ padding: 1vw 2vw }
+.head .nav img{ height: 4vw }
+.bd .cap{ background: #73a2de url(res/bbs/bg.gif) no-repeat top / 100% 6vw; padding: 1vw 2vw; color: #fff }
+.footer, .footer a{ color: #777; font-size: 3vw }
+.footer{ padding: 3vw 0mm }
 }
 </style></head><body>
 <div class="head">
@@ -39,8 +53,8 @@ body{ margin: 0mm 7mm; font: 4mm/6mm simsun,arial }
 </div>
 <% func(); %>
 <div class="footer tc mt">
-	<hr color="#4d76b3" size="1" width="500" />
-	<tt>&copy; <%= sys.sTime.getFullYear() %></tt> &nbsp; JsAspBBS &nbsp; 版本：<a href="http://bbs.fengyun.org/ver/JsAspBBS.2204.01.zip">v1.2204.01</a>；
+	<hr color="#4d76b3" size="1" width="500" class="for-web" />
+	<tt>&copy; <%= sys.sTime.getFullYear() %></tt> &nbsp; JsAspBBS &nbsp;<span class="for-web"> 版本：<a href="http://bbs.fengyun.org/ver/JsAspBBS.2204.01.zip">v1.2204.03</a>；</span>
 	<%if (me().roleid > 6) { %><a href="?r=admin/api">管理中心</a> &nbsp;<% } %>
 	执行 <%= new Date - sys.sTime %> ms</a>
 </div>

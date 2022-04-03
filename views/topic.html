@@ -1,4 +1,5 @@
 <style type="text/css">
+@media screen and (min-width: 721px) {
 .main .user{ width: 9cm; border-right: var(--bd); padding: 3mm 4mm }
 .main .user b{ color: #08c }
 .main .user small{ font-size: 3mm; color: #777 }
@@ -26,29 +27,52 @@ textarea{ background-color: #eee }
 .addr:hover .admin{ display: block }
 .admin u{ cursor: pointer }
 .editor textarea, .code textarea{ width: 100%; height: 2in }
+}
+@media screen and (max-width: 720px) {
+.topic .odd{ background-color: var(--bg) }
+.topic .main, .topic .reply{ display: block }
+.topic .main{ border-top: var(--bd); padding: 2vw 2vw 0mm }
+.topic .user .level{ float: right; font: 3vw/4vw arial; transform: translateY(-5vw); margin-bottom: -4vw }
+.topic .reply .lou{ float: left }
+.topic .reply .lou b{ font-weight: normal; color: #900; font-size: 3vw; margin-right: 2vw }
+.topic .reply .addr{ font-size: 3vw; color: #777 }
+.topic .reply .msg img{ max-width: 100%; max-height: 100vh }
+.editor textarea, .code textarea{ width: 99%; height: 30vw; font: 4vw/6vw arial }
+.post{ padding-bottom: 4vw }
+.post .form{ border-top: var(--bd) }
+.post .form .flex{ border-bottom: var(--bd) }
+.post .form .label{ padding: 1vw 2vw; background-color: #eee; width: 20vw }
+.post .form .auto{ border-left: var(--bd); padding: 1vw 2vw }
+.post .form .auto *{ border: none; width: 100%; vertical-align: middle; outline: none; font: 4vw/6vw arial }
+.post .form .auto textarea{ height: 20vw }
+.post .form .user input{ width: 32vw }
+.post .btn input{ font: 4vw/6vw arial; padding: 1vw 4vw }
+}
 </style>
 <div class="pos mt bd"><a href="."><%= sys.name %></a> → <a href="?r=forum/<%= topic.forumid %>"><%= topic.nick %></a> → 浏览：帖子主题</div>
-<div class="bd mt">
-	<div class="cap"><b>* 帖子主题：</b><%= topic.title %></div><% rows.forEach(function(x, i) { %>
+<div class="bd mt topic">
+	<div class="cap"><b class="for-web">* 帖子主题：</b><%= topic.title %></div><% rows.forEach(function(x, i) { %>
 	<!-- 帖子内容开始 -->
 	<div class="main flex<%= i % 2 ? ' odd' : '' %>">
 		<!-- 用户展示区 -->
 		<div class="user">
 			<div><b><%= x.nick %></b> <small>(ID: <%= x.userid %>)</small></div><% if(x.roleid > 1) { %>
-			<div>头衔：<%= roles[x.roleid] %></div><% } %>
-			<div class="power bd" style="--per: <%= getPer(x.jifen) %>%"></div>
-			等级：<%= jifen.getNick(x.jifen, x.roleid) %><br />
-			积分：<%= x.jifen %><br />
-			发帖：<b><%= x.fatie %></b> 篇<br />
-			来自：<%= me().roleid > 2 ? x.diqu || "未设置" : "保密" %><br />
-			注册：<%= x.regtime %><br />
-			造访：<%= x.lasttime %>
+			<div class="for-web">头衔：<%= roles[x.roleid] %></div><% } %>
+			<div class="power bd for-web" style="--per: <%= getPer(x.jifen) %>%"></div>
+			<span class="for-web">等级：</span><span class="level"><%= jifen.getNick(x.jifen, x.roleid) %></span>
+			<div class="for-web">
+				积分：<%= x.jifen %><br />
+				发帖：<b><%= x.fatie %></b> 篇<br />
+				来自：<%= me().roleid > 2 ? x.diqu || "未设置" : "保密" %><br />
+				注册：<%= x.regtime %><br />
+				造访：<%= x.lasttime %>
+			</div>
 		</div>
 		<!-- 帖子展示区 -->
 		<div class="reply auto flex">
 			<div class="lou">
 				<b class="fr">[ 第 <span><%= lou + i %></span> 楼 ]</b>
-				<a href="#reply"><img src="<%= sys.res %>icon/replynow.gif" />回复</a>
+				<a href="#reply" class="for-web"><img src="<%= sys.res %>icon/replynow.gif" />回复</a>
 			</div>
 			<div class="auto">
 				<div class="msg"><%= fmtMsg(x.message) %></div>
@@ -73,9 +97,9 @@ textarea{ background-color: #eee }
 			<div class="flex">
 				<span class="label">账号/密码</span>
 				<div class="auto user">
-					用户：<input name="user" placeholder="请输入用户名" />
-					<a href="?r=register">没有注册？</a>
-					密码：<input name="pass" type="password" placeholder="请输入登录密码" />
+					<span class="for-web">用户：</span><input name="user" placeholder="请输入用户名" />
+					<span class="for-web"><a href="?r=register">没有注册？</a>
+					密码：</span><input name="pass" type="password" placeholder="请输入登录密码" />
 				</div>
 			</div><% } %>
 			<div class="flex">
@@ -91,7 +115,7 @@ textarea{ background-color: #eee }
 			</div><% } %>
 		</div>
 		<input type="hidden" name="topicid" value="<%= topic.topicid %>" />
-		<div class="tc mt"><input type="button" value="发表新主题" /></div>
+		<div class="tc mt btn"><input type="button" value="发表新主题" /></div>
 	</div>
 </div>
 <div class="editor hide">

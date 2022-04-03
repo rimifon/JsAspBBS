@@ -1,4 +1,5 @@
 <style type="text/css">
+@media screen and (min-width: 721px) {
 .pos{ padding: 1mm 3mm; background-color: var(--bg) }
 .col{ border-left: var(--bd); box-sizing: border-box }
 .cap .col{ padding: 2mm 0mm }
@@ -29,15 +30,42 @@ textarea{ background-color: #eee }
 .online .list .li{ width: 4cm }
 .online .icon{ padding: 2mm 3mm; background-color: var(--bg) }
 .online .pad{ border-left: var(--bd); padding: 2mm 4mm }
+}
+@media screen and (max-width: 720px) {
+.online .cap{ font-size: 3.5vw }
+.online .list{ padding: 1vw 2vw; border-top: var(--bd); flex-wrap: wrap }
+.online .list .li{ width: 23.1vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.online .list img{ height: 3vw }
+.topic .cap{ line-height: 8vw }
+.topic .admin{ float: none; text-align: right; font: 3vw/4vw arial; transform: translateY(6vw); margin-bottom: -4vw }
+.topic .main{ display: block; border-top: var(--bd); padding: 1vw 2vw }
+.topic .main .c4{ text-align: left; color: #777; font: 3vw/4vw times }
+.topic .main .ding:after{ float: left; content: '[固顶]'; color: red }
+.topic .main a.bold{ color: #900 }
+.topic .main a.blue{ color: blue }
+.topic .main a.blue:after{ float: left; content: '[精华]'; color: red }
+.post{ padding-bottom: 4vw }
+.post .form{ border-top: var(--bd) }
+.post .form .flex{ border-bottom: var(--bd) }
+.post .form .label{ padding: 1vw 2vw; background-color: #eee; width: 20vw }
+.post .form .auto{ border-left: var(--bd); padding: 1vw 2vw }
+.post .form .auto *{ border: none; width: 100%; vertical-align: middle; outline: none; font: 4vw/6vw arial }
+.post .form .auto textarea{ height: 20vw }
+.post .form .user input{ width: 32vw }
+.post .btn input{ font: 4vw/6vw arial; padding: 1vw 4vw }
+} 
 </style>
 <div class="pos mt bd">
 	<a href="."><%= sys.name %></a> → <%= forum.nick %> → 浏览论坛主题
 </div>
 <!-- 论坛在线统计 -->
 <div class="online bd mt">
-	<div class="cap">目前论坛总共有 <%= users.all %> 人，本分论坛共有 <%= online.length %> 人在线。其中注册用户 <%= users.reg %> 人，访客 <%= users.guest %> 人。</div>
+	<div class="cap">
+		目前论坛总共有 <%= users.all %> 人，本分论坛共有 <%= online.length %> 人在线。
+		<span class="for-web">其中注册用户 <%= users.reg %> 人，访客 <%= users.guest %> 人。</span>
+	</div>
 	<div class="main flex">
-		<div class="icon flex ac"><div><img src="<%= sys.res %>icon/online.gif" /></div></div>
+		<div class="icon flex ac for-web"><div><img src="<%= sys.res %>icon/online.gif" /></div></div>
 		<div class="box auto pad">
 			<div class="list flex"><% online.forEach(function(x) { %>
 				<div class="li" title="<%= onlineInfo(x) %>">
@@ -47,13 +75,13 @@ textarea{ background-color: #eee }
 		</div>
 	</div>
 </div>
-<div class="bd mt list">
+<div class="topic bd mt list">
 	<div class="tc flex cap" style="padding: 0mm">
-		<div class="col c1">状态</div>
+		<div class="col c1 for-web">状态</div>
 		<div class="col auto">主　题</div>
-		<div class="col c2">作者</div>
-		<div class="col c3">回复/点击</div>
-		<div class="col c4">最后更新 | 回复人</div>
+		<div class="col c2 for-web">作者</div>
+		<div class="col c3 for-web">回复/点击</div>
+		<div class="col c4 for-web">最后更新 | 回复人</div>
 	</div><% rows.forEach(function(x) { %>
 	<div class="main flex">
 		<div class="col c1 <%= x.ding ? 'ding' : 'nonew' %>"></div>
@@ -65,8 +93,8 @@ textarea{ background-color: #eee }
 			</div><% } %>
 			<a href="?r=topic/<%= x.topicid %>" class="<%= x.ding ? 'bold' : x.jing ? 'blue' : 'nml' %>"><%= x.title %></a>
 		</div>
-		<div class="col c2 tc"><%= x.nick %></div>
-		<div class="col c3 tc"><%= x.replynum %>/<%= x.pv %></div>
+		<div class="col c2 tc for-web"><%= x.nick %></div>
+		<div class="col c3 tc for-web"><%= x.replynum %>/<%= x.pv %></div>
 		<div class="col c4 tc ellipsis"><%= x.replytime == null ? "-" : tojson(x.replytime).slice(1, -4) %> | <%= x.reply || "-" %></div>
 	</div><% }); %>
 </div>
@@ -79,9 +107,9 @@ textarea{ background-color: #eee }
 			<div class="flex">
 				<span class="label">账号/密码</span>
 				<div class="auto user">
-					用户：<input name="user" placeholder="请输入用户名" />
-					<a href="?r=register">没有注册？</a>
-					密码：<input name="pass" type="password" placeholder="请输入登录密码" />
+					<span class="for-web">用户：</span><input name="user" placeholder="请输入用户名" />
+					<span class="for-web"><a href="?r=register">没有注册？</a>
+					密码：</span><input name="pass" type="password" placeholder="请输入登录密码" />
 				</div>
 			</div><% } %>
 			<div class="flex">
@@ -101,7 +129,7 @@ textarea{ background-color: #eee }
 			</div><% } %>
 		</div>
 		<input type="hidden" name="forumid" value="<%= forum.forumid %>" />
-		<div class="tc mt"><input type="button" value="发表新主题" /></div>
+		<div class="tc mt btn"><input type="button" value="发表新主题" /></div>
 	</div>
 </div>
 <script type="text/javascript">
