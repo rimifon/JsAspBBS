@@ -30,13 +30,16 @@ textarea{ background-color: #eee }
 }
 @media screen and (max-width: 720px) {
 .topic .odd{ background-color: var(--bg) }
+.topic .cap{ white-space: nowrap; overflow: auto }
 .topic .main, .topic .reply{ display: block }
 .topic .main{ border-top: var(--bd); padding: 2vw 2vw 0mm }
-.topic .user .level{ float: right; font: 3vw/4vw arial; transform: translateY(-5vw); margin-bottom: -4vw }
+.topic .user{ border-bottom: var(--bd); margin-bottom: 2vw }
+.topic .user .level{ float: right; font: 3vw/4vw arial; transform: translateY(-5vw); margin-bottom: -4vw; color: #08c }
 .topic .reply .lou{ float: left }
 .topic .reply .lou b{ font-weight: normal; color: #900; font-size: 3vw; margin-right: 2vw }
-.topic .reply .addr{ font-size: 3vw; color: #777 }
+.topic .reply .addr{ font-size: 3vw; border-top: var(--bd); margin: 2vw 0mm 0mm; color: #777; padding: 1vw 2vw }
 .topic .reply .msg img{ max-width: 100%; max-height: 100vh }
+.topic .reply .msg .attach{ color: #08c; text-decoration: underline }
 .editor textarea, .code textarea{ width: 99%; height: 30vw; font: 4vw/6vw arial }
 .post{ padding-bottom: 4vw }
 .post .form{ border-top: var(--bd) }

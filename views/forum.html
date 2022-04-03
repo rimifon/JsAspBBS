@@ -39,11 +39,10 @@ textarea{ background-color: #eee }
 .topic .cap{ line-height: 8vw }
 .topic .admin{ float: none; text-align: right; font: 3vw/4vw arial; transform: translateY(6vw); margin-bottom: -4vw }
 .topic .main{ display: block; border-top: var(--bd); padding: 1vw 2vw }
+.topic .main .auto a.title{ display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
 .topic .main .c4{ text-align: left; color: #777; font: 3vw/4vw times }
-.topic .main .ding:after{ float: left; content: '[固顶]'; color: red }
 .topic .main a.bold{ color: #900 }
 .topic .main a.blue{ color: blue }
-.topic .main a.blue:after{ float: left; content: '[精华]'; color: red }
 .post{ padding-bottom: 4vw }
 .post .form{ border-top: var(--bd) }
 .post .form .flex{ border-bottom: var(--bd) }
@@ -91,7 +90,7 @@ textarea{ background-color: #eee }
 				<a onclick="doJing(parentNode)"><%= x.jing ? "取消" : "" %>加精</a> |
 				<a onclick="doDrop(parentNode)">删除</a>
 			</div><% } %>
-			<a href="?r=topic/<%= x.topicid %>" class="<%= x.ding ? 'bold' : x.jing ? 'blue' : 'nml' %>"><%= x.title %></a>
+			<a href="?r=topic/<%= x.topicid %>" class="title <%= x.ding ? 'bold' : x.jing ? 'blue' : 'nml' %>"><%= x.title %></a>
 		</div>
 		<div class="col c2 tc for-web"><%= x.nick %></div>
 		<div class="col c3 tc for-web"><%= x.replynum %>/<%= x.pv %></div>
