@@ -43,7 +43,9 @@ function boot(route) {
 				users[ x.roleid > 0 ? "reg" : "guest" ]++;
 				return true;
 			});
+			online = fromjson(cc().win.JSON.stringify(online));		// 优化速度
 			online.sort(function(a, b) { return b.eTime - a.eTime; });
+			online.forEach = function(f) { for(var i = 0; i < this.length; i++) f(this[i], i); };
 			var onlineInfo = function(x) {
 				return [
 					"当前位置：" + x.weizhi,
