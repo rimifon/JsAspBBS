@@ -5,5 +5,5 @@
 
 * 操作系统：Windows Server (2012|2016|2019)
 * 运行环境：IIS + ASP(JScript) + SQL Server Compact
-
-演示地址：[JsAspBBS](http://bbs.fengyun.org)
+* 演示地址：[JsAspBBS](http://bbs.fengyun.org)
+* 下载链接：[花了两天时间开发了一个论坛程序](http://bbs.fengyun.org/?r=topic/3)
