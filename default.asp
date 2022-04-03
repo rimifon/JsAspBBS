@@ -533,12 +533,15 @@ function initSite() {
 	mine.weizhi = "论坛首页";
 	mine.path = "/";
 	mine.xitong = (function() {
-		var ua = env("HTTP_USER_AGENT");
-		if(!ua) return "采集工具";
-		var test = ua.match(/(\w+)\-?(?:bot|(?: web )?spider)/i);
+		var ua = env("HTTP_USER_AGENT") || "No User-Agent";
+		var test = ua.match(/(\w+)[\s\-]?(?:bot|(?:web )?spider)/i);
 		if(test) return test[1] + " 爬虫";
+		test = ua.match(/android|iphone|ipad/i);
+		if(test) return test[0];
+		test = ua.match(/windows|macintosh|linux|ios/i);
+		if(test) return test[0];
 		dbg().trace("IP：" + env("REMOTE_ADDR"), env("HTTP_REFERER") || env("HTTP_USER_AGENT"));
-		return (ua.match(/windows|android|macintosh|linux|ios|iphone|ipad/i) || [ "未知系统" ])[0];
+		return "采集工具";
 	})();
 	return site;
 }
