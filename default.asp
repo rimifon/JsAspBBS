@@ -535,7 +535,7 @@ function initSite() {
 	mine.xitong = (function() {
 		var ua = env("HTTP_USER_AGENT") || "No User-Agent";
 		var test = ua.match(/(\w+)[\s\-]?(?:bot|(?:web )?spider)/i);
-		if(test) return test[1] + " 爬虫";
+		if(test) return mine.nick = test[1] + " 爬虫";
 		test = ua.match(/android|iphone|ipad/i);
 		if(test) return test[0];
 		test = ua.match(/windows|macintosh|linux|ios/i);
