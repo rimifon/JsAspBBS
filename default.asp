@@ -38,6 +38,7 @@ function boot(route) {
 				});
 				return tojson(catas);
 			}, 9);
+			// 数组转 json 后缓存，读取时会更快
 			forums = fromjson(forums);
 			var online = fromjson(sys.online.data());
 			online.users.guest = online.users.all - online.users.reg;
