@@ -54,9 +54,9 @@ function boot(route) {
 					"点击次数：" + x.hits
 				].join("\r\n");
 			}
-			if(online.length > ~~site.topOnline) {
+			if(online.users.all > ~~site.topOnline) {
 				// 更新最高在线
-				site.topOnline = online.length;
+				site.topOnline = online.users.all;
 				site.topOntime = sys.sTime - 0;
 			}
 			return master(function() { %><!-- #include file="views/index.html" --><% });
