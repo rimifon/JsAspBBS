@@ -140,10 +140,10 @@ function boot(route) {
 
 			,RegisterDoc: [ "用户注册", "user, pass", "第一个注册的用户将自动成为论坛坛主。" ]
 			,register: function() {
-				// 用户名不可包含<>
+				// 用户名不可包含<">
 				var par = { nick: form("user") };
 				if(!par.nick) return { err: "缺少用户名" };
-				if(/[<>"]/.test(par.nick)) return { err: "非法的用户名/昵称" };
+				if(/[<">]/.test(par.nick)) return { err: "非法的用户名/昵称" };
 				if(db().scalar("select userid from users where nick=@nick", par)) return { err: "此用户名已经被注册了" };
 				par.pass = md5(form("pass") || "a", 16);
 				par.lasttime = sys.sTime.getVarDate();
