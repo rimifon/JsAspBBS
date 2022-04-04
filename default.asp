@@ -36,9 +36,9 @@ function boot(route) {
 					obj[ x.pid ].list.push(x);
 					x.banzhu = banzhu[ x.forumid ] || new Array;
 				});
+				// 数组转 json 后缓存，读取时会更快
 				return tojson(catas);
 			}, 9);
-			// 数组转 json 后缓存，读取时会更快
 			forums = fromjson(forums);
 			var online = fromjson(sys.online.data());
 			online.users.guest = online.users.all - online.users.reg;
