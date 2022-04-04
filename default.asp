@@ -36,16 +36,13 @@ function boot(route) {
 					obj[ x.pid ].list.push(x);
 					x.banzhu = banzhu[ x.forumid ] || new Array;
 				});
-				return catas;
+				return tojson(catas);
 			}, 9);
-			var users = { guest: 0, reg: 0 };
-			var online = sys.online.filter(function(x) {
-				users[ x.roleid > 0 ? "reg" : "guest" ]++;
-				return true;
-			});
-			online = fromjson(cc().win.JSON.stringify(online));		// 优化速度
-			online.sort(function(a, b) { return b.eTime - a.eTime; });
-			online.forEach = function(f) { for(var i = 0; i < this.length; i++) f(this[i], i); };
+			forums = fromjson(forums);
+			var online = fromjson(sys.online.data());
+			online.users.guest = online.users.all - online.users.reg;
+			online.rows.sort(function(a, b) { return b.eTime - a.eTime; });
+			online.rows.forEach = function(f) { for(var i = 0; i < this.length; i++) f(this[i], i); };
 			var onlineInfo = function(x) {
 				return [
 					"当前位置：" + x.weizhi,
@@ -97,14 +94,9 @@ function boot(route) {
 				select("b.*, c.nick, d.nick as reply").orderby("b.ding desc, coalesce(replytime, posttime) desc").query();
 			var pager = db().pager;
 			sys.online.setWeiZhi("forum/" + par.forumid, forum.nick, ss().sessId);
-			var users = { all: 0, guest: 0, reg: 0 };
-			var online = sys.online.filter(function(x) {
-				users.all++;
-				if(x.path != "forum/" + par.forumid) return false;
-				users[ x.roleid > 0 ? "reg" : "guest" ]++;
-				return true;
-			});
-			online.sort(function(a, b) { return b.eTime - a.eTime; });
+			var online = fromjson(sys.online.data("forum/" + par.forumid));
+			online.users.guest = online.rows.length - online.users.reg;
+			online.rows.sort(function(a, b) { return b.eTime - a.eTime; });
 			var onlineInfo = function(x) {
 				return [
 					"当前位置：" + x.weizhi,
@@ -572,6 +564,17 @@ function initOnline() {
 				if(f(data[x])) arr.push(data[x]);
 			}
 			return arr;
+		};
+		ins.data = function(path) {
+			var arr = new Array, users = { all: 0, reg: 0 };
+			for(var x in data) {
+				users.all++;
+				if(path && path != data[x].path) continue;
+				// 仅首页和指定页统计当前已注册人数
+				if(data[x].roleid > 0) users.reg++;
+				arr.push(data[x]); 
+			}
+			return JSON.stringify({ rows: arr, users: users });
 		};
 		ins.setWeiZhi = function(path, weizhi, sessId) {
 			var user = data[sessId];

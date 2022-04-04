@@ -60,13 +60,13 @@ textarea{ background-color: #eee }
 <!-- 论坛在线统计 -->
 <div class="online bd mt">
 	<div class="cap">
-		目前论坛总共有 <%= users.all %> 人，本分论坛共有 <%= online.length %> 人在线。
-		<span class="for-web">其中注册用户 <%= users.reg %> 人，访客 <%= users.guest %> 人。</span>
+		目前论坛总共有 <%= online.users.all %> 人，本分论坛共有 <%= online.rows.length %> 人在线。
+		<span class="for-web">其中注册用户 <%= online.users.reg %> 人，访客 <%= online.users.guest %> 人。</span>
 	</div>
 	<div class="main flex">
 		<div class="icon flex ac for-web"><div><img src="<%= sys.res %>icon/online.gif" /></div></div>
 		<div class="box auto pad">
-			<div class="list flex"><% online.forEach(function(x) { %>
+			<div class="list flex"><% online.rows.forEach(function(x) { %>
 				<div class="li" title="<%= onlineInfo(x) %>">
 					<img src="<%= sys.res %>online/<%= x.roleid %>.gif" /><%= x.sessId == ss().sessId ? x.nick.fontcolor("blue") : x.nick %>
 				</div><% }); %>
