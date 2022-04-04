@@ -18,7 +18,6 @@ a{ color: #000; text-decoration: none }
 @media screen and (min-width: 721px) {
 body{ margin: 0mm 7mm; font: 4mm/6mm simsun,arial }
 .mt{ margin-top: 3mm }
-.head .banner{ background-image: url(res/bbs/toplogobg.jpg); height: 150px }
 .head .nav{ background-image: linear-gradient(#fff, #eee); padding: 1mm 2mm }
 .bd .cap{ background: #73a2de url(res/bbs/bg.gif) no-repeat top / 100% 1cm; padding: 2mm; color: #fff }
 .bd .main{ border-top: var(--bd) }
@@ -31,8 +30,6 @@ body{ margin: 0mm 7mm; font: 4mm/6mm simsun,arial }
 .pos a{ color: #08c }
 body{ font: 4vw/6vw arial; margin: 0mm; background: #fff }
 .mt{ margin-top: 2vw }
-.head .banner{ height: 20vw; background: url(res/bbs/toplogobg.jpg) repeat-x top / 100vw 20vw }
-.head .banner img{ height: 20vw }
 .head .nav{ padding: 1vw 2vw }
 .head .nav img{ height: 4vw }
 .bd .cap{ background: #73a2de url(res/bbs/bg.gif) no-repeat top / 100% 6vw; padding: 1vw 2vw; color: #fff }
@@ -41,10 +38,6 @@ body{ font: 4vw/6vw arial; margin: 0mm; background: #fff }
 }
 </style></head><body>
 <div class="head">
-	<div class="banner">
-		<a href="." class="fl"><img src="<%= sys.res %>toplogo.jpg" /></a>
-		<img class="fr" src="<%= sys.res %>toplogo2.jpg" />
-	</div>
 	<div class="bd nav">
 		<a href="." class="fr"><img src="<%= sys.res %>gohome.gif" /></a>
 		&#xbb; 欢迎您，<b><%= me().nick || "客人" %></b>：<% if(!me().isLogin) { %>
