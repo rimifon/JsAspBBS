@@ -171,7 +171,7 @@ function boot(route) {
 				user.lastip = env("REMOTE_ADDR");
 				user.lasttime = sys.sTime.getVarDate();
 				user.jifen++;
-				db().query("update users set lastip=@lastid, lasttime=@lasttime, jifen=jifen+1 where userid=@userid", { lastip: user.lastip, lasttime: user.lasttime, userid: user.userid });
+				db().query("update users set lastip=@lastip, lasttime=@lasttime, jifen=jifen+1 where userid=@userid", { lastip: user.lastip, lasttime: user.lasttime, userid: user.userid });
 				me().bind.call(0, user);
 				sys.onlineMe.nick = user.nick;
 				sys.onlineMe.roleid = user.roleid;
