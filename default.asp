@@ -461,9 +461,9 @@ function fmtMsg(str) {
 	});
 	str = str.replace(/\t/g, "    ").replace(/  /g, "&nbsp; ").replace(/\r?\n/g, "<br />\r\n").
 		replace(/\[(image|upload)=([^\]]+)\]/g, function(src, $1, $2) {
-			var file = $2.split(":");
+			var file = $2.split("|");
 			return $1 == "image" ? '<div><a href="' + file[0] + '" target="_blank"><img src="' + file[0] + '" alt="' + html(file[1]) + '" /></a></div>'
-				: ('<a href="' + file[0] + '" class="attach">' + file[1] + '</a>(' + file[2] + ')');
+				: ('<a href="' + file[0] + '" class="attach" target="_blank">' + file[1] + '</a>(' + file[2] + ')');
 		});
 	return str.replace(/\[html=\x01\]/g, function() {
 		return '<div class="code"><textarea>' + arrCode.shift() + '</textarea><p class="tr">[您可以先修改代码再运行] <input type="button" value="执行代码" onclick="runcode(parentNode)" /></p></div>';

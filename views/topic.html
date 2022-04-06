@@ -205,8 +205,8 @@ function startUp(x) {
 			if(res.err) return alert(res.err);
 			var type = /\.(jpg|gif|png)$/.test(res.path) ? "image" : "upload";
 			var fname = file.name.replace(/\[/g, "(").replace(/\]/g, ")");
-			fname += ":"+ parseSize(file.size, "Byte,Kb,Mb,Gb".split(","));
-			ipt[ipt.length - 4].value += "[" + type + "=" + res.path + ":" + fname + "]";
+			fname += "|"+ parseSize(file.size, "Byte,Kb,Mb,Gb".split(","));
+			ipt[ipt.length - 4].value += "[" + type + "=" + res.path + "|" + fname + "]";
 			alert("上传成功");
 		}).catch(function(err){ alert("上传异常"); });
 }
