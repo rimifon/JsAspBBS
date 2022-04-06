@@ -398,6 +398,7 @@ function boot(route) {
 					if(!forumid) return db().insert("forums", par), { msg: "创建成功" };
 					return db().update("forums", par, { forumid: forumid }), { msg: "保存成功" };
 				}
+
 				,ForumDropDoc: [ "删除版块", "forumid", "坛主可以删除空的版块" ]
 				,forumdrop: function() {
 					if(~~me().roleid < 7) return { err: "没有权限" };
