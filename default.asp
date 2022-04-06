@@ -523,9 +523,9 @@ function initSite() {
 	if(mine.ip) return site;
 	site.uv = -~site.uv;
 	// 初始化新用户
-	mine.nick = "客人";
+	mine.nick = me().nick || "客人";
 	mine.ip = env("REMOTE_ADDR");
-	mine.roleid = 0;
+	mine.roleid = me().roleid || 0;
 	mine.weizhi = "论坛首页";
 	mine.path = "/";
 	mine.xitong = (function() {
