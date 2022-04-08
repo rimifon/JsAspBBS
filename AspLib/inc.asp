@@ -1,6 +1,6 @@
 ﻿<!-- #include file="core.asp" --><%
 sys.debug = true;
-sys.wx = { id: "wx6f334128143af949", secret: "1616ab94128494f3f82935cef0acbe94" };
+sys.wx = { id: "wx0123456789abcdef", secret: "1234567890abcdef1234567890abcdef" };
 sys.mch = { id: "123456789", key: "1234567890abcdef1234567890abcdef", cert: "LOCAL_MACHINE\\MY\\某某科技有限公司" };
 sys.smtp = { host: "smtp.qq.com", user: "@qq.com", pass: "asdgkasdkgakdglsldf" };
 
