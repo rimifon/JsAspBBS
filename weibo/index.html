@@ -1,0 +1,242 @@
+<!doctype html><html lang="zh"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>微博</title>
+<base href="/" />
+<style type="text/css">
+body{ margin: 0mm; font: 4vw/6vw arial; background-color: #f5f7f8; color: #0b0b37 }
+a{ color: unset; text-decoration: none }
+img{ max-width: 100%; vertical-align: middle }
+.mt{ margin-top: 2vw }
+.bg{ background-color: #fff }
+.xs{ font-size: 3.5vw }
+.xxs{ font-size: 3vw }
+.flex{ display: flex }
+.flex .auto{ flex: 1 }
+.fl{ float: left }
+.tr{ text-align: right }
+input{ font: 4vw/6vw arial}
+.header{ background: #2469f6; color: #fff; text-align: center; padding: 8vw 0mm }
+.header h1{ font: italic 7vw/10vw arial; margin: 0mm; padding: 3vw 0mm }
+.header .flex div{ flex: 1 }
+.header span{ color: #a7c3fb }
+.header b{ font-weight: normal }
+.tab{ display: flex; overflow: auto; font: 3.5vw/12vw arial }
+.tab p{ margin: 0mm 4vw; white-space: nowrap }
+.tab .act{ font-weight: bold; color: #2469f6; border-bottom: 0.5vw solid #2469f6 }
+.ding{ line-height: 10vw; padding: 0mm 2vw }
+.ding .flex span{ color: #8590a6; padding: 0mm 4vw 0mm 2vw }
+.ding .flex a{ text-overflow: ellipsis; overflow: hidden; white-space: nowrap }
+.weibo{ padding: 4vw 4vw 0mm; max-height: 999vh }
+.weibo .user{ line-height: 5vw }
+.weibo .user .icon{ width: 10vw; height: 10vw; border-radius: 50%; background-color: #8590a6; color: #fff; margin-right: 2vw; line-height: 10vw; text-align: center }
+.weibo .user div{ color: #8590a6 }
+.weibo .reply{ margin-bottom: 2vw }
+.weibo .flex{ border-top: 0.3vw solid #eee; text-align: center }
+.weibo .flex div{ padding: 3vw; color: #8590a6 }
+.weibo .fixed .message{ max-height: 25vh; overflow: hidden; margin-bottom: -25vw }
+.weibo .fixed .show{ position: relative }
+.weibo .fixed .show:before{ content: ""; background-image: linear-gradient(rgba(255, 255, 255, 0), #fff); display: block; height: 16vw }
+.weibo .fixed .show:after{ content: "查看更多"; display: block; text-align: center; padding: 2vw; background-color: #fff; color: #08c }
+.weibo .expand .show:after{ content: "折叠"; display: block; text-align: center; padding: 2vw; background-color: #fff; color: #08c }
+.code textarea{ width: 99%; height: 30vw; font: 4vw/6vw arial }
+.wait{ text-align: center; color: #8590a6; font: 3.5vw/20vh arial }
+</style></head><body>
+<div class="header">
+	<h1>-</h1>
+	<div class="flex">
+		<div><span>成员：</span><b>-</b></div>
+		<div><span>内容：</span><b>-</b></div>
+		<div><span>💞</span><a href="."><b>论坛</b></a></div>
+	</div>
+</div>
+<!-- Tab 分页 -->
+<div class="tab bg">
+	<p class="act" data-id="0">全部</p>
+</div>
+<!-- 置顶列表 -->
+<div class="mt bg ding xs">
+	<div class="flex">
+		<span>置顶</span>
+		<a class="tt title auto">帖子标题帖子标题帖子标题帖子标题帖子标题帖子标题</a>
+	</div>
+</div>
+<!-- 微博列表 -->
+<div>
+	<div class="wait">加载中…</div>
+	<div class="weibo mt bg">
+		<div class="user xs">
+			<b class="tt fname icon fl">用</b>
+			<b class="tt nick">用户名</b>
+			<div class="tt date xxs">2022-04-06 &nbsp; 点击：<span class="tt hits">216</span></div>
+		</div>
+		<div class="mt"><a target="_blank"><b class="tt title">如何合并两个论坛的数据？</b></a></div>
+		<div>
+			<div class="tt message reply"></div>
+			<div class="show" onclick="toggleShow(parentNode)"></div>
+		</div>
+		<div class="flex xs">
+			<div>点赞：0</div>
+			<div class="auto"><a target="_blank">评论：<span class="tt replynum"></span></a></div>
+			<div><a class="tt btn1" target="_blank">分享</a></div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+// tab 分页模板
+var tab = new function() {
+	this.bind = function(rows) {
+		rows.forEach(function(r) {
+			var p = document.createElement("p");
+			p.innerHTML = r.nick;
+			p.setAttribute("data-id", r.forumid);
+			menu.appendChild(p);
+		});
+	};
+	var menu = document.querySelector(".tab");
+	var item = menu.querySelector("p");
+	var actItem = item;
+	menu.addEventListener("click", function(e) {
+		if (e.target.nodeName != "P") return;
+		if(e.target == actItem) return;
+		actItem.className = "";
+		actItem = e.target;
+		actItem.className = "act";
+		weibos.forumid = ~~actItem.dataset.id;
+		weibos.lastid = 0;
+		weibos.showwait();
+		weibos.loadmore();
+	});
+};
+
+// 微博列表模板
+var weibos = new function() {
+	this.bind = function(rows) {
+		rows.forEach(function(x) {
+			x.fname = x.nick.substr(0, 1);
+			x.date = x.posttime.substr(0, 10);
+			x.btn1 = "详情";
+			tt.forEach(function(y) {
+				var col = y.classList[1];
+				y.innerHTML = fmtMsg(x[col]);
+				if(col == "replycount" || col == "title") y.parentNode.href = "?r=topic/" + x.topicid;
+				if(col == "btn1") y.href = "?r=topic/" + x.topicid;
+			});
+			var row = list.appendChild(temp.cloneNode(true));
+			var reply = row.querySelector(".reply").parentNode;
+			// 判断 reply 的高度，如果超过屏幕高度，则裁剪
+			if(reply.offsetHeight > window.innerHeight / 4) {
+				reply.className = "fixed";
+			}
+		});
+	};
+	this.loadmore = function() {
+		var form = new Object;
+		if(this.lastid) form.lastid = this.lastid;
+		if(this.forumid) form.forumid = this.forumid;
+		post("weibo/topicList", form, function(res) {
+			weibos.loading = false;
+			if(res.err) return alert(res.err);
+			if(!weibos.lastid) {
+				list.innerHTML = "";
+				dings.bind(res.dings);
+			}
+			weibos.lastid = res.topics.length > 10 ? res.topics.pop().topicid : 0;
+			weibos.bind(res.topics);
+		});
+		this.loading = true;
+	};
+	this.clear = function() { list.innerHTML = ""; };
+	this.showwait = function() { list.innerHTML = "<div class='wait'>加载中...</div>"; };
+	var temp = document.querySelector(".weibo");
+	var tt = temp.querySelectorAll(".tt");
+	var list = temp.parentNode;
+	list.removeChild(temp);
+};
+
+// 置顶列表模板
+var dings = new function() {
+	this.bind = function(rows) {
+		list.innerHTML = "";
+		rows.forEach(function(x) {
+			tt.forEach(function(y) {
+				y.innerHTML = x[y.classList[1]];
+			});
+			tt[0].href = "?r=topic/" + x.topicid;
+			var row = list.appendChild(temp.cloneNode(true));
+		});
+	};
+	var temp = document.querySelector(".ding .flex");
+	var tt = temp.querySelectorAll(".tt");
+	var list = temp.parentNode;
+	list.removeChild(temp);
+};
+
+// 加载首页数据
+post("weibo/home", "", function(res) {
+	if(res.err) return alert(res.err);
+	// 绑定头部信息
+	var header = document.querySelectorAll(".header h1, .header b");
+	header[0].textContent = document.title = res.sitename;
+	header[1].textContent = res.total.users;
+	header[2].textContent = res.total.topics;
+	tab.bind(res.forums);
+	dings.bind(res.dings);
+	weibos.lastid = res.topics.length > 10 ? res.topics.pop().topicid : 0;
+	// 绑定微博列表
+	weibos.clear();
+	weibos.bind(res.topics);
+});
+
+// Post 请求
+function post(api, form, func) {
+	fetch("/?r=" + api, {
+		headers: { "Content-Type": "application/x-www-form-urlencoded" },
+		body: parseForm(form), method: "POST"
+	}).then(function(response) { return response.json(); }).then(function(json) { func(json); });
+}
+// 解析表单
+function parseForm(form) {
+	if(!form) return "";
+	if("object" != typeof form) return form;
+	var arr = new Array;
+	for(var x in form) {
+		arr.push(encodeURIComponent(x) + "=" + encodeURIComponent(form[x]));
+	}
+	return arr.join("&");
+}
+// 论坛帖子格式化
+function fmtMsg(str) {
+	var str = str + "", arrCode = new Array;
+	str = str.replace(/\[html\]([\s\S]+?)\[\/html\]/gi, function(txt, code) {
+		arrCode.push(code);
+		return "[html=\x01]";
+	});
+	str = str.replace(/\t/g, "    ").replace(/  /g, "&nbsp; ").replace(/\r?\n/g, "<br />\r\n").
+		replace(/\[(image|upload)=([^\]]+)\]/g, function(src, $1, $2) {
+			var file = $2.split("|");
+			return $1 == "image" ? '<div><a href="' + file[0] + '" target="_blank"><img src="' + file[0] + '" alt="' + file[1] + '" /></a></div>'
+				: ('<a href="' + file[0] + '" class="attach" target="_blank">' + file[1] + '</a>(' + file[2] + ')');
+		});
+	return str.replace(/\[html=\x01\]/g, function() {
+		return '<div class="code"><textarea>' + arrCode.shift() + '</textarea><p class="tr">[您可以先修改代码再运行] <input type="button" value="执行代码" onclick="runcode(parentNode)" /></p></div>';
+	});
+}
+function runcode(tag) {
+	var win = open("about:blank", "_blank", "");
+	win.document.write(tag.parentNode.firstChild.value);
+}
+
+// 切换显示收缩
+function toggleShow(tag) { tag.className = tag.className == "fixed" ? "expand" : "fixed"; }
+
+// 触底事件
+window.onscroll = function() {
+	var root = document.documentElement;
+	// 设置触底距离
+	var reach = root.clientHeight / 20, stop = root.scrollTop || document.body.scrollTop;
+	if(root.scrollHeight - stop - root.clientHeight > reach) return;
+	if(weibos.loading || !weibos.lastid) return;
+	weibos.loadmore();
+};
+</script>
+</body></html>

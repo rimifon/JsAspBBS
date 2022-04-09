@@ -349,11 +349,12 @@ function boot(route) {
 			,api: {
 				Memo: [ "管理端 API 接口 " + "[返回论坛]".link(".") ]
 
-				,SetSiteNameDoc: [ "设置网站名称", "sitename" ]
+				,SetSiteNameDoc: [ "设置网站名称", "sitename, weiboname", "sitename: 网站名称", "weiboname: 微博版式名称" ]
 				,setsitename: function() {
 					if(~~me().roleid < 7) return { err: "没有设置权限" };
 					var site = fromjson(db().scalar("select * from site"));
 					site.sitename = form("sitename");
+					site.weiboname = form("weiboname");
 					db().query("update site set cfg=@cfg", { cfg: tojson(site) });
 					return site;
 				}
@@ -408,6 +409,57 @@ function boot(route) {
 					db().query("delete from forums where forumid=@forumid", par);
 					return { msg: "删除成功" }
 				}
+			}
+		}
+
+		// 微博模块
+		,weibo: {
+			Memo: [ "微博模块 | " + "点击访问".link("weibo/"), "微博模块是一个可以发布微博的模块，可以让用户发布微博，并且可以让用户关注其他用户。" ]
+
+			// 微博首页
+			,HomeDoc: [ "微博首页" ]
+			,home: function() {
+				sys.ismaster = true;
+				// 获取论坛版块名称列表
+				var forums = db().table("forums a").join("forums b on b.forumid=a.pid").
+					select("a.forumid, a.pid, a.nick").where("a.pid>0").orderby("b.sort, a.sort").query();
+				// 获取用户数和帖子数
+				var total = cc(sys.ns + ".weibo.total", function() {
+					var rs = new Object;
+					rs.users = db().scalar("select count(0) from users");
+					rs.topics = db().table("forums").select("sum(topicnum)").scalar();
+					return rs;
+				}, 30);
+				var list = this.topiclist();
+				return { forums: forums, topics: list.topics, sitename: site.weiboname || sys.name, total: total, dings: list.dings };
+			}
+
+			// 论坛帖子列表
+			,TopicListDoc: [ "论坛帖子列表", "forumid, lastid", "forumid: int, 版块ID", "lastid: int, 可以为空", "第 11 条为下页第一条" ]
+			,topiclist: function() {
+				var forumid = ~~form("forumid"), lastid = ~~form("lastid");
+				var query = db().table("topic"), where = new Array, par = new Object, where2 = new Array;
+				if(forumid) {
+					where.push("forumid=@forumid");
+					where2.push("forumid=@forumid");
+					par.forumid = forumid;
+				}
+				where2.push("ding=1");
+				// 不存在分页时查询置顶内容
+				var dings = !lastid ? db().table("topic").where(where2.join(" and ")).select("top 4 topicid, title").orderby("topicid desc").query(par) : [];
+				if(lastid) {
+					where.push("topicid<=@lastid");
+					par.lastid = lastid;
+				}
+				if(where.length) query.where(where.join(" and "));
+				// 统计帖子评论数
+				var topics = query.orderby("topicid desc").select("top 11 topicid").astable("a").
+					// 取第一条评论为帖子内容
+					join("reply b on b.topicid=a.topicid").groupby("a.topicid").select("a.topicid, min(b.replyid) as replyid").
+					astable("a").join("topic b on b.topicid=a.topicid").join("users c on c.userid=b.userid").
+					join("forums d on d.forumid=b.forumid").join("reply e on e.replyid=a.replyid").orderby("a.topicid desc").
+					select("a.*, b.title, b.replynum, e.message, b.posttime, c.nick, c.icon, d.nick as forumname").query(par);
+				return { topics: topics, dings: dings };
 			}
 		}
 	}, route);

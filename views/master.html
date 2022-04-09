@@ -16,6 +16,7 @@ a{ color: #000; text-decoration: none }
 .ellipsis{ overflow: hidden; white-space: nowrap; text-overflow: ellipsis }
 .bd{ border: var(--bd); box-sizing: border-box }
 @media screen and (min-width: 721px) {
+.for-wap{ display: none }
 body{ margin: 0mm 7mm; font: 4mm/6mm simsun,arial }
 .mt{ margin-top: 3mm }
 .head .nav{ background-image: linear-gradient(#fff, #eee); padding: 1mm 2mm }
@@ -43,6 +44,7 @@ body{ font: 4vw/6vw arial; margin: 0mm; background: #fff }
 		&#xbb; 欢迎您，<b><%= me().nick || "客人" %></b>：<% if(!me().isLogin) { %>
 		<a href="?r=login">登录</a> | <a href="?r=register">注册</a><% } else { %>
 		<a href="?r=logout">退出登录</a><% } %>
+		<span class="for-wap"> | <a href="weibo/">微博</a></span>
 	</div>
 </div>
 <% func(); %>
