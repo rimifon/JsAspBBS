@@ -118,8 +118,9 @@ var weibos = new function() {
 			tt.forEach(function(y) {
 				var col = y.classList[1];
 				y.innerHTML = fmtMsg(x[col]);
-				if(col == "replycount" || col == "title") y.parentNode.href = "?r=topic/" + x.topicid;
-				if(col == "btn1") y.href = "?r=topic/" + x.topicid;
+				var href = "?r=topic/" + x.topicid;
+				if(col == "replynum" || col == "title") y.parentNode.href = href;
+				if(col == "btn1") y.href = href;
 			});
 			var row = list.appendChild(temp.cloneNode(true));
 			var reply = row.querySelector(".reply").parentNode;
