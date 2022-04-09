@@ -437,6 +437,7 @@ function boot(route) {
 			// 论坛帖子列表
 			,TopicListDoc: [ "论坛帖子列表", "forumid, lastid", "forumid: int, 版块ID", "lastid: int, 可以为空", "第 11 条为下页第一条" ]
 			,topiclist: function() {
+				sys.online.setWeiZhi("/weibo", "查看微博", ss().sessId);
 				var forumid = ~~form("forumid"), lastid = ~~form("lastid");
 				var query = db().table("topic"), where = new Array, par = new Object, where2 = new Array;
 				if(forumid) {
