@@ -459,7 +459,7 @@ function boot(route) {
 					join("reply b on b.topicid=a.topicid").groupby("a.topicid").select("a.topicid, min(b.replyid) as replyid").
 					astable("a").join("topic b on b.topicid=a.topicid").join("users c on c.userid=b.userid").
 					join("forums d on d.forumid=b.forumid").join("reply e on e.replyid=a.replyid").orderby("a.topicid desc").
-					select("a.*, b.title, b.replynum, e.message, b.posttime, c.nick, c.icon, d.nick as forumname").query(par);
+					select("a.*, b.title, b.pv, b.replynum, b.posttime, c.nick, c.icon, d.nick as forumname, e.message").query(par);
 				return { topics: topics, dings: dings };
 			}
 		}
