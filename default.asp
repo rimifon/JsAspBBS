@@ -391,6 +391,24 @@ function boot(route) {
 					return { list: res, pager: db().pager };
 				}
 
+				// 用户权限设置
+				,UserRoleDoc: [ "用户权限设置", "userid, roleid", "userid: int, 用户 ID", "roleid: int, 权限 ID" ]
+				,userrole: function() {
+					if(~~me().roleid < 7) return { err: "没有操作权限" };
+					var par = { userid: ~~form().userid, roleid: ~~form().roleid };
+					db().update("users", { roleid: par.roleid }, { userid: par.userid });
+					return { msg: "操作完成" };
+				}
+
+				// 编辑帖子标题
+				,EditTitleDoc: [ "编辑帖子标题", "topicid, title", "topicid: int, 帖子 ID", "title: string, 标题" ]
+				,edittitle: function() {
+					if(~~me().roleid < 7) return { err: "没有操作权限" };
+					var par = { topicid: ~~form().topicid, title: form("title") };
+					db().update("topic", { title: par.title }, { topicid: par.topicid });
+					return { msg: "操作完成" };
+				}
+
 				,ForumSaveDoc: [ "保存板块信息", "[forumid], pid, nick, intro, sort", "点此进入添加版块界面".link("?r=admin/forum/0") ]
 				,forumsave: function() {
 					if(~~me().roleid < 7) return { err: "没有权限" };
