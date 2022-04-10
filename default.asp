@@ -477,8 +477,30 @@ function boot(route) {
 					join("reply b on b.topicid=a.topicid").groupby("a.topicid").select("a.topicid, min(b.replyid) as replyid").
 					astable("a").join("topic b on b.topicid=a.topicid").join("users c on c.userid=b.userid").
 					join("forums d on d.forumid=b.forumid").join("reply e on e.replyid=a.replyid").orderby("a.topicid desc").
-					select("a.*, b.title, b.pv, b.replynum, b.posttime, c.nick, c.icon, d.nick as forumname, e.message").query(par);
+					select("a.*, b.title, b.pv, b.replynum, b.posttime, b.pv, c.nick, c.icon, d.nick as forumname, e.replyid, e.message").query(par);
 				return { topics: topics, dings: dings };
+			}
+
+			// 评论列表
+			,RepliesDoc: [ "评论列表", "topicid, firstid, [lastid]", "topicid: int, 帖子ID", "firstid: int, 排除回复的id", "lastid: int, 可以为空", "第 11 条为下页第一条" ]
+			,replies: function() {
+				var par = { topicid: ~~form("topicid") };
+				// 获取主题名称，板块名称，登记用户当前位置，并且增加主题 PV
+				var topic = db().table("topic a").join("forums b on b.forumid=a.forumid").
+					select("a.topicid, a.forumid, a.title, b.nick").
+					where("a.topicid=@topicid").fetch(par);
+				if(!topic) return { err: "主题不存在" };
+				sys.online.setWeiZhi("forum/" + topic.forumid, "[微博]" + topic.title, ss().sessId);
+				db().query("update topic set pv=pv+1 where topicid=@topicid", par);
+				// 获取回复列表
+				var where ="a.topicid=@topicid and a.replyid!=@firstid";
+				par.firstid = ~~form("firstid");
+				var lastid = ~~form("lastid");
+				if(lastid) { where += " and a.replyid<=@lastid"; par.lastid = lastid; }
+				var replies = db().table("reply a").join("users b on b.userid=a.userid").
+					where(where).select("top 11 a.replyid, a.message, a.replytime, b.nick, b.icon").
+					orderby("a.replyid desc").query(par);
+				return { replies: replies, userid: ~~me().userid };
 			}
 		}
 	}, route);
