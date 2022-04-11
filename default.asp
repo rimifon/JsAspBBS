@@ -401,11 +401,14 @@ function boot(route) {
 				}
 
 				// 编辑帖子标题
-				,EditTitleDoc: [ "编辑帖子标题", "topicid, title", "topicid: int, 帖子 ID", "title: string, 标题" ]
+				,EditTitleDoc: [ "编辑帖子标题", "topicid, title, forumid", "topicid: int, 帖子 ID", "title: string, 标题", "forumid: int, 版块ID" ]
 				,edittitle: function() {
 					if(~~me().roleid < 7) return { err: "没有操作权限" };
-					var par = { topicid: ~~form().topicid, title: form("title") };
-					db().update("topic", { title: par.title }, { topicid: par.topicid });
+					var par = new Object;
+					if(form("title")) par.title = form("title");
+					if(form("forumid")) par.forumid = ~~form("forumid");
+					if(!par.title && !par.forumid) return { err: "没有操作内容" };
+					db().update("topic", par, { topicid: ~~form("topicid") });
 					return { msg: "操作完成" };
 				}
 
