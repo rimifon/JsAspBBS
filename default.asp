@@ -401,7 +401,7 @@ function boot(route) {
 				}
 
 				// 编辑帖子标题
-				,EditTitleDoc: [ "编辑帖子标题，或转移帖子到其他版块", "topicid, title, forumid", "topicid: int, 帖子 ID", "title: string, 标题", "forumid: int, 版块ID" ]
+				,EditTitleDoc: [ "编辑帖子标题，或转移帖子到其他版块", "topicid, title, forumid", "topicid: int, 帖子 ID", "title: string, 标题", "forumid: int, 版块 ID" ]
 				,edittitle: function() {
 					if(~~me().roleid < 7) return { err: "没有操作权限" };
 					var par = new Object, where = { topicid: ~~form("topicid") };

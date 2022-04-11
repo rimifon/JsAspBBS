@@ -181,10 +181,14 @@ var weibos = new function() {
 			});
 			var row = list.appendChild(temp.cloneNode(true));
 			var reply = row.querySelector(".reply").parentNode;
-			// 判断 reply 的高度，如果超过屏幕高度，则裁剪
-			if(reply.offsetHeight > window.innerHeight / 4) {
-				reply.className = "fixed";
-			}
+			var img = row.querySelectorAll("img");
+			var clipd = setClip(reply);
+			img.forEach(function(x) {
+				x.onload = x.onerror = function() {
+					if(clipd) return;
+					clipd = setClip(reply);
+				};
+			});
 			tempPL.init(row, x);
 		});
 	};
@@ -206,6 +210,13 @@ var weibos = new function() {
 	};
 	this.clear = function() { list.innerHTML = ""; };
 	this.showwait = function() { list.innerHTML = "<div class='wait'>加载中...</div>"; };
+	function setClip(reply) {
+		// 判断 reply 的高度，如果超过屏幕高度，则裁剪
+		if(reply.offsetHeight > window.innerHeight / 4) {
+			reply.className = "fixed"; return true;
+		}
+		return false;
+	}
 	var temp = document.querySelector(".weibo");
 	var tempPL = new TempPL(temp.querySelector(".replies .list .row"));
 	var tt = temp.querySelectorAll(".tt");
