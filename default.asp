@@ -565,6 +565,7 @@ function fmtMsg(str) {
 		return "[html=\x01]";
 	});
 	str = str.replace(/\t/g, "    ").replace(/  /g, "&nbsp; ").replace(/\r?\n/g, "<br />\r\n").
+		replace(/\[(.+?)\]\(http(.+?)\)/g, '<a href="http$2" target="_blank">$1</a>').
 		replace(/\[(image|upload)=([^\]]+)\]/g, function(src, $1, $2) {
 			var file = $2.split("|");
 			return $1 == "image" ? '<div><a href="' + file[0] + '" target="_blank"><img src="' + file[0] + '" alt="' + html(file[1]) + '" /></a></div>'
