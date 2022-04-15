@@ -116,7 +116,7 @@ function boot(route) {
 				var page = Math.ceil((x.replynum + 1) / 12);
 				for(var i = 1; i <= page; i++) arr.push(i.toString().link("?r=topic/" + x.topicid + "/" + i));
 				if(page > 6) arr.splice(3, page - 6, "……");
-				return " [ " + arr.join(" ") + " ]";
+				return " [第 " + arr.join(" ") + " 页]";
 			};
 			return master(function() { %><!-- #include file="views/forum.html" --><% });
 		}
