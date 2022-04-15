@@ -23,7 +23,7 @@
 .form .label{ width: 1in; text-align: right; background-color: var(--bg); padding: 2mm; border-left: var(--bd) }
 .form .ipt{ border-bottom: var(--bd); margin-left: 3cm; padding: 1mm 2mm }
 textarea{ background-color: #eee }
-.pager b{ color: #900 }
+.pager b{ color: #900; text-decoration: underline }
 .admin{ display: none }
 .addr:hover .admin{ display: block }
 .admin u{ cursor: pointer }
@@ -39,6 +39,7 @@ textarea{ background-color: #eee }
 .topic .reply .lou{ float: left }
 .topic .reply .lou b{ font-weight: normal; color: #900; font-size: 3vw; margin-right: 2vw }
 .topic .reply .addr{ font-size: 3vw; border-top: var(--bd); margin: 2vw 0mm 0mm; color: #777; padding: 1vw 2vw }
+.topic .reply .msg{ word-break: break-all }
 .topic .reply .msg img{ max-width: 100%; max-height: 100vh }
 .topic .reply .msg a{ color: #08c }
 .topic .reply .msg .attach{ font-weight: bold; text-decoration: underline }
@@ -52,10 +53,12 @@ textarea{ background-color: #eee }
 .post .form .auto textarea{ height: 20vw }
 .post .form .user input{ width: 32vw }
 .post .btn input{ font: 4vw/6vw arial; padding: 1vw 4vw }
+.pager b{ color: #900; text-decoration: underline }
 }
 </style>
 <div class="pos mt bd"><a href="."><%= sys.name %></a> → <a href="?r=forum/<%= topic.forumid %>"><%= topic.nick %></a> → 浏览：帖子主题</div>
-<div class="bd mt topic">
+<% if(pager.pagenum > 1) { %><div class="pager mt">分页: <%= makePager(pager, "?r=topic/" + topic.topicid + "/") %>， 共 <%= pager.pagenum %> 页</div>
+<% } %><div class="bd mt topic">
 	<div class="cap"><b class="for-web">* 帖子主题：</b><%= topic.title %></div><% rows.forEach(function(x, i) { %>
 	<!-- 帖子内容开始 -->
 	<div class="main flex<%= i % 2 ? ' odd' : '' %>">

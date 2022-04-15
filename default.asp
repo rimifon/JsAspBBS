@@ -109,6 +109,15 @@ function boot(route) {
 				].join("\r\n");
 			}
 			var isBZ = isBanZhu(forum.forumid);
+			var showPage = function(x) {
+				// 每页显示 12 条回复
+				if(x.replynum < 12) return "";
+				var arr = new Array;
+				var page = Math.ceil((x.replynum + 1) / 12);
+				for(var i = 1; i <= page; i++) arr.push(i.toString().link("?r=topic/" + x.topicid + "/" + i));
+				if(page > 6) arr.splice(3, page - 6, "……");
+				return " [ " + arr.join(" ") + " ]";
+			};
 			return master(function() { %><!-- #include file="views/forum.html" --><% });
 		}
 

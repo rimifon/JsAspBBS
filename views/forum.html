@@ -90,7 +90,7 @@ textarea{ background-color: #eee }
 				<a onclick="doJing(parentNode)"><%= x.jing ? "取消" : "" %>加精</a> |
 				<a onclick="doDrop(parentNode)">删除</a>
 			</div><% } %>
-			<a href="?r=topic/<%= x.topicid %>" class="title <%= x.ding ? 'bold' : x.jing ? 'blue' : 'nml' %>"><%= x.title %></a>
+			<a href="?r=topic/<%= x.topicid %>" class="title <%= x.ding ? 'bold' : x.jing ? 'blue' : 'nml' %>"><%= x.title %></a><%= showPage(x) %>
 		</div>
 		<div class="col c2 tc for-web"><%= x.nick %></div>
 		<div class="col c3 tc for-web"><%= x.replynum %>/<%= x.pv %></div>
