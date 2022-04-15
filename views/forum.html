@@ -186,7 +186,7 @@ function startUp(x) {
 		then(function(res) {
 			if(res.err == "需要登录") return login(x);
 			if(res.err) return alert(res.err);
-			var type = /\.(jpg|gif|png)$/.test(res.path) ? "image" : "upload";
+			var type = /\.(jpg|gif|png)$/i.test(res.path) ? "image" : "upload";
 			var fname = file.name.replace(/\[/g, "(").replace(/\]/g, ")");
 			fname += "|"+ parseSize(file.size, "Byte,Kb,Mb,Gb".split(","));
 			ipt[ipt.length - 4].value += "[" + type + "=" + res.path + "|" + fname + "]";
