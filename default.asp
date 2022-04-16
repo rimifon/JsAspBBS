@@ -1,6 +1,7 @@
 <!-- #include virtual="/AspLib/api.asp" --><%
 function boot(route) {
 	sys.name = "JsAspBBS";
+	// sys.apiAuth = "Admin:666666";
 	sys.res = "res/bbs/";
 	sys.dbPath = "App_Data/JsAspBBS.sdf";
 	sys.ns = "JsAspBBS";
