@@ -1,10 +1,10 @@
 <!-- #include virtual="/AspLib/api.asp" --><%
 function boot(route) {
 	sys.name = "JsAspBBS";
-	// sys.apiAuth = "Admin:666666";
 	sys.res = "res/bbs/";
 	sys.dbPath = "App_Data/JsAspBBS.sdf";
 	sys.ns = "JsAspBBS";
+	// sys.apiAuth = "Admin:666666";
 	sys.onerror = catchErr;
 	var roles = [ "客人", "普通会员", "认证会员", "论坛副版主", "论坛版主", "分类区版主", "论坛总版主", "论坛坛主" ];
 	var site = initSite();
