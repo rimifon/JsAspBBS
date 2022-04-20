@@ -247,7 +247,7 @@ function tojson(obj) {
 }
 
 function fromjson(str) {
-	var regTag = /[\{\[\"ntf\d\.]/, i = 0, len = str.length;
+	var regTag = /[\{\[\"ntf\d\.\-]/, i = 0, len = str.length;
 	function newParse() {
 		var s = waitStr(regTag);
 		if(!s) return;
@@ -304,7 +304,7 @@ function fromjson(str) {
 	function findNum(s) {
 		while(i < len) {
 			var _s = str.charAt(i++);
-			if(!/[\d\.]/.test(_s)) break;
+			if(!/[\d\.\-]/.test(_s)) break;
 			s += _s;
 		}
 		// 上个字符非数字，重新进入匹配
