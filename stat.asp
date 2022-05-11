@@ -52,7 +52,7 @@ table td p{ white-space: nowrap; margin: 0mm }
 			<tr>
 				<td><%= x[0] %></td>
 				<td><%= x[1] %></td>
-				<td><%= x[2] %></td>
+				<td><%= html(x[2] || "") %></td>
 				<td><%= x[5] %>ms</td>
 				<td><%= x[3] %></td>
 				<td><p><%= tojson(x[4]).slice(1, -1) %></p></td>
@@ -67,7 +67,7 @@ table td p{ white-space: nowrap; margin: 0mm }
 				<th>路由</th><th>耗时</th><th>方式</th><th>路径</th><th>请求IP</th><th>发生时间</th>
 			</tr><% slow.forEach(function(x) { %>
 			<tr>
-				<td><%= x[2] %></td>
+				<td><%= html(x[2] || "") %></td>
 				<td><%= x[5] %>ms</td>
 				<td><%= x[0] %></td>
 				<td><%= x[1] %></td>
@@ -84,7 +84,7 @@ table td p{ white-space: nowrap; margin: 0mm }
 				<th>路由</th><th>耗时</th><th>方式</th><th>路径</th><th>发生时间</th>
 			</tr><% logs.forEach(function(x) { %>
 			<tr>
-				<td><%= x.info[2] %></td>
+				<td><%= html(x.info[2] || "") %></td>
 				<td><%= x.info[4] %>ms</td>
 				<td><%= x.info[0] %></td>
 				<td>
