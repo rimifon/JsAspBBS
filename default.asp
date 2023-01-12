@@ -20,7 +20,7 @@ function boot(route) {
 					groupby("a.forumid, b.forumid").astable("a").join("forums b on b.forumid=a.forumid").
 					join("reply c on c.replyid=b.replyid").join("topic d on d.topicid=c.topicid").
 					join("users e on e.userid=c.userid").join("forums f on f.forumid=a.pid").select(
-						"a.*, b.nick, b.intro, b.topicnum, b.replynum, d.title, c.topicid, c.replytime, e.nick as zuozhe, f.nick as pnick"
+						"a.*, b.nick, b.intro, b.topicnum, b.replynum, d.title, d.replynum / 12 + 1 as maxpage, c.topicid, c.replytime, e.nick as zuozhe, f.nick as pnick"
 					).orderby("f.sort, f.forumid, b.sort, b.forumid").query();
 				var catas = new Array, obj = new Object, banzhu = new Object;
 				db().table("banzhu a").join("users b on b.userid=a.userid").

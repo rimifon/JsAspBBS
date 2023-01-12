@@ -78,7 +78,8 @@ textarea{ background-color: #eee }
 				造访：<%= x.lasttime %>
 			</div>
 		</div>
-		<!-- 帖子展示区 -->
+		<!-- 帖子展示区 --><% if(topic.replynum == lou + i - 1) { %>
+		<a name="last"></a><% } %>
 		<div class="reply auto flex">
 			<div class="lou">
 				<b class="fr">[ 第 <span><%= lou + i %></span> 楼 ]</b>

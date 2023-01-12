@@ -89,7 +89,7 @@
 				<div>回复：<span class="fr"><%= r.replynum %></span></div>
 			</div>
 			<div class="col odd tj auto">
-				<div class="ellipsis">主题：<%= r.title ? r.title.link("?r=topic/" + r.topicid) : "-" %></div>
+				<div class="ellipsis">主题：<%= r.title ? r.title.link("?r=topic/" + r.topicid + (r.maxpage > 1 ? "/" + r.maxpage : "") + "#last") : "-" %></div>
 				<div class="ellipsis">最后发表：<%= r.zuozhe || "-" %></div>
 				<div class="ellipsis"><%= r.replytime == null ? "暂时没有更新" : tojson(r.replytime).slice(1, -1) %></div>
 			</div>
