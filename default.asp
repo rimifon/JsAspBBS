@@ -327,7 +327,7 @@ function boot(route) {
 				if(!me().isLogin) return { err: "需要登录" };
 				if(me().jifen < 50 && me().roleid < 2) return { err: "您的积分不到50，暂不允许上传文件" };
 				var up = lib("/AspLib/lib/FyUpload.sct");
-				up.Filter = "jpg|jpg|png|gif|zip|rar|txt";
+				up.Filter = "jpg|jpg|png|gif|zip|rar|txt|mp3|m4a";
 				up.MaxSize = 1024 * 1024;	// 允许 1M
 				up.Charset = "UTF-8"; up.ReadForm(2e5);
 				var file = up.Form("file");
@@ -586,6 +586,9 @@ function fmtMsg(str) {
 			var file = $2.split("|");
 			return $1 == "image" ? '<div><a href="' + file[0] + '" target="_blank"><img src="' + file[0] + '" alt="' + html(file[1]) + '" /></a></div>'
 				: ('<a href="' + file[0] + '" class="attach" target="_blank">' + file[1] + '</a>(' + file[2] + ')');
+		}).replace(/\[(audio|video)=([^\]]+)\]/g, function(src, $1, $2) {
+			var file = $2.split("|");
+			return '<div><' + $1 + ' src="' + file[0] + '" title="' + file[1] + '" controls="yes"></' + $1 + '></div>';
 		});
 	return str.replace(/\[html=\x01\]/g, function() {
 		return '<div class="code"><textarea>' + arrCode.shift() + '</textarea><p class="tr">[您可以先修改代码再运行] <input type="button" value="执行代码" onclick="runcode(parentNode)" /></p></div>';

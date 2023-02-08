@@ -121,7 +121,7 @@ textarea{ background-color: #eee }
 				<span class="label">附件或图片</span>
 				<div class="auto">
 					<input size="53" type="file" onchange="startUp(this)" />
-					<br />支持：txt|jpg|jpeg|gif|png|zip|rar
+					<br />支持：txt|jpg|jpeg|gif|png|zip|rar|mp3|m4a
 				</div>
 			</div><% } %>
 		</div>
@@ -202,7 +202,7 @@ function editReply(tag, replyid) {
 }
 function startUp(x) {
 	var file = x.files[0];
-	var allow = /\.(txt|jpg|jpeg|gif|png|zip|rar)$/i;
+	var allow = /\.(txt|jpg|jpeg|gif|png|zip|rar|mp3|m4a)$/i;
 	if(!allow.test(file.name)) return alert("不支持的文件格式");
 	if(file.size > 1024 * 1024) return alert("文件不能大于 1Mb");
 	var body = new FormData;
