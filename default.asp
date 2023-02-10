@@ -588,7 +588,7 @@ function fmtMsg(str) {
 				: ('<a href="' + file[0] + '" class="attach" target="_blank">' + file[1] + '</a>(' + file[2] + ')');
 		}).replace(/\[(audio|video)=([^\]]+)\]/g, function(src, $1, $2) {
 			var file = $2.split("|");
-			return '<div><' + $1 + ' src="' + file[0] + '" title="' + file[1] + '" controls="yes"></' + $1 + '></div>';
+			return '<div><' + $1 + ' src="' + file[0] + '" title="' + file[1] + '" controls="yes" preload="none"></' + $1 + '></div>';
 		});
 	return str.replace(/\[html=\x01\]/g, function() {
 		return '<div class="code"><textarea>' + arrCode.shift() + '</textarea><p class="tr">[您可以先修改代码再运行] <input type="button" value="执行代码" onclick="runcode(parentNode)" /></p></div>';
