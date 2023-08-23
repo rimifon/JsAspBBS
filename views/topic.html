@@ -115,7 +115,7 @@ textarea{ background-color: #eee }
 			</div><% } %>
 			<div class="flex">
 				<span class="label">评论内容</span>
-				<div class="auto"><textarea name="message" cols="52" rows="8" placeholder="请输入评论内容"></textarea></div>
+				<div class="auto"><textarea name="message" cols="52" rows="8" placeholder="请输入评论内容" onkeydown="autoPost(event)"></textarea></div>
 			</div><% if(me().jifen > 49 || isBZ) { %>
 			<div class="flex">
 				<span class="label">附件或图片</span>
@@ -138,7 +138,8 @@ textarea{ background-color: #eee }
 </div>
 <script type="text/javascript">
 var ipt = document.querySelectorAll(".post input, .post textarea");
-ipt[ipt.length - 1].onclick = function() {
+ipt[ipt.length - 1].onclick = doPost;
+function doPost() {
 	var data = new Object;
 	ipt.forEach(function(x) {
 		if(!x.name) return;
@@ -151,10 +152,16 @@ ipt[ipt.length - 1].onclick = function() {
 	if(!data.message) return alert("请输入评论内容");
 	post("?r=api/replyAdd", data, function(res) {
 		if(res.err) return alert(res.err);
-		alert(res.msg);
+		// alert(res.msg);
 		location.reload();
 	});
-};
+}
+function autoPost(e) {
+	if(!e.ctrlKey) return;
+	if(e.keyCode != 13) return;
+	e.preventDefault();
+	doPost();
+}
 function dropReply(id, lou) {
 	if(!confirm("确定要删除这个" + (lou == 1 ? "帖子" : "评论") + "吗？")) return;
 	post("?r=api/replyDrop", { replyid: id }, function(res) {
