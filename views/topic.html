@@ -150,8 +150,9 @@ function doPost() {
 		if(!data.pass) return alert("请输入密码");
 	}
 	if(!data.message) return alert("请输入评论内容");
+	if(self.posting) return; self.posting = true;
 	post("?r=api/replyAdd", data, function(res) {
-		if(res.err) return alert(res.err);
+		if(res.err) return [ alert(res.err), delete self.posting ];
 		// alert(res.msg);
 		location.reload();
 	});

@@ -144,8 +144,9 @@ function doPost() {
 	if("pass" in data && !data.pass) return alert("请填写密码");
 	if(!data.title) return alert("请填写主题标题");
 	if(!data.message) return alert("请填写帖子内容");
+	if(self.posting) return; self.posting = true;
 	post("?r=api/topicAdd", data, function(res) {
-		if(res.err) return alert(res.err);
+		if(res.err) return [ alert(res.err), delete self.posting ];
 		// alert(res.msg);
 		location.assign("?r=forum/" + data.forumid);
 	});
