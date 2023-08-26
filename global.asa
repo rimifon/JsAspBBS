@@ -24,7 +24,7 @@ function initIE() {
 	data.xml.dataType = "bin.base64";
 	doc.write("<meta http-equiv='X-UA-Compatible' content='IE=edge' />");
 	data.cvs = doc.createElement("canvas");
-	data.ctx = data.cvs.getContext("2d");
+	// data.ctx = data.cvs.getContext("2d");
 	data.utf = new ActiveXObject("System.Text.UTF8Encoding");
 	var win = doc.frames; win.cc = data; data.win = win;
 	doTasks(function(func) { win.eval("(" + func + ")")(); });
