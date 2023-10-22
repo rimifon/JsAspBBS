@@ -8,6 +8,7 @@ function boot(route) {
 	sys.onerror = catchErr;
 	var roles = [ "客人", "普通会员", "认证会员", "论坛副版主", "论坛版主", "分类区版主", "论坛总版主", "论坛坛主" ];
 	var site = initSite();
+	sys.wxbotkey = site.wxbotkey;
 	return apidoc({
 		// 论坛首页
 		index: function() {
@@ -168,6 +169,7 @@ function boot(route) {
 				sys.onlineMe.roleid = user.roleid;
 				me().bind.call(0, user);
 				dbg().trace("用户『" + user.nick + "』注册成功");
+				wxBotMsg("用户『" + user.nick + "』注册成功");
 				return { msg: "注册成功" };
 			}
 
@@ -185,6 +187,7 @@ function boot(route) {
 				me().bind.call(0, user);
 				sys.onlineMe.nick = user.nick;
 				sys.onlineMe.roleid = user.roleid;
+				wxBotMsg(par.user + " 登录成功");
 				return { msg: "登录成功" };
 			}
 
@@ -214,6 +217,7 @@ function boot(route) {
 				db().query("update users set fatie=fatie+1, jifen=jifen+5 where userid=@userid", { userid: me().userid });
 				me().fatie++; me().jifen += 5;
 				dbg().trace(me().nick + "发表了帖子《" + form().title + "》");
+				wxBotMsg(me().nick + "发表了帖子《" + form().title + "》");
 				return { msg: "发帖成功", topicid: topicid };
 			}
 
@@ -237,6 +241,7 @@ function boot(route) {
 				db().query("update topic set replynum=replynum+1, replytime=getdate(), replyid=@userid where topicid=@topicid", { userid: me().userid, topicid: par.topicid });
 				db().query("update users set jifen=jifen+2 where userid=@userid", { userid: me().userid });
 				dbg().trace(me().nick + "评论了帖子《" + topic.title + "》");
+				wxBotMsg(me().nick + "评论了帖子《" + topic.title + "》");
 				me().jifen += 2; return { msg: "评论成功" };
 			}
 
@@ -365,6 +370,15 @@ function boot(route) {
 					var site = fromjson(db().scalar("select * from site"));
 					site.sitename = form("sitename");
 					site.weiboname = form("weiboname");
+					db().query("update site set cfg=@cfg", { cfg: tojson(site) });
+					return site;
+				}
+
+				,SetWxBotCodeDoc: [ "设置企业微信机器人 Key", "key", "key: 企业微信机器人 Key" ]
+				,setwxbotcode: function() {
+					if(~~me().roleid < 7) return { err: "没有设置权限" };
+					var site = fromjson(db().scalar("select * from site"));
+					site.wxbotkey = form("key");
 					db().query("update site set cfg=@cfg", { cfg: tojson(site) });
 					return site;
 				}
@@ -593,6 +607,13 @@ function fmtMsg(str) {
 	return str.replace(/\[html=\x01\]/g, function() {
 		return '<div class="code"><textarea>' + arrCode.shift() + '</textarea><p class="tr">[您可以先修改代码再运行] <input type="button" value="执行代码" onclick="runcode(parentNode)" /></p></div>';
 	});
+}
+
+// 发送企业微信机器人通知
+function wxBotMsg(msg) {
+	if(!sys.wxbotkey) return;
+	var data = tojson({ text: { content: msg }, msgtype: "text" });
+	return ajax("https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=" + sys.wxbotkey, data, "application/json");
 }
 
 function jifenHelper() {
