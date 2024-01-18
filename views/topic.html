@@ -208,8 +208,8 @@ function editReply(tag, replyid) {
 	});
 
 }
-function startUp(x) {
-	var file = x.files[0];
+async function startUp(x) {
+	var file = await scaleImage(x.files[0]);
 	var allow = /\.(txt|jpg|jpeg|gif|png|zip|rar|mp3|m4a)$/i;
 	if(!allow.test(file.name)) return alert("不支持的文件格式");
 	if(file.size > 1024 * 1024) return alert("文件不能大于 1Mb");
@@ -245,5 +245,26 @@ function parseSize(num, arr) {
 function runcode(tag) {
 	var win = open("about:blank", "_blank", "");
 	win.document.write(tag.parentNode.firstChild.value);
+}
+
+async function scaleImage(file, f) {
+	if(!f) return new Promise(function(ok) { scaleImage(file, ok); });
+	// 判断是否图片类型
+	if(!/^image/i.test(file.type)) return file;
+	var img = new Image, maxWidth = 1280;
+	img.onload = function() {
+		if(img.width <= maxWidth) return f(file);
+		img.height = img.height * maxWidth / img.width;
+		cvs.width = img.width = maxWidth;
+		cvs.height = img.height;
+		ctx.drawImage(img, 0, 0, maxWidth, img.height);
+		cvs.toBlob(function(blob) {
+			f(new File([blob], file.name, { type: file.type }));
+		}, file.type, 0.6);
+	};
+	img.onerror = function() { alert("错误的图片文件"); };
+	img.src = URL.createObjectURL(file);
+	var cvs = document.createElement("canvas");
+	var ctx = cvs.getContext("2d");
 }
 </script>
