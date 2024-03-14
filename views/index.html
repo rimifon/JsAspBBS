@@ -44,7 +44,7 @@
 <div class="user bd mt">
 	<div class="cap">-=> <%= me().isLogin ? "会员信息预览" : "快速登录入口" %><span class="for-web">　&nbsp; [
 		来自：<%= env("REMOTE_ADDR") %>，时间：<%= tojson(sys.sTime.getVarDate()).slice(1, -1) %>，
-		系统： <%= (env("HTTP_USER_AGENT").match(/windows|android|macintosh|linux|ios|iphone|ipad/i) || [ "未知系统" ])[0] %>
+		系统： <%= ((env("HTTP_USER_AGENT") || "None").match(/windows|android|macintosh|linux|ios|iphone|ipad/i) || [ "未知系统" ])[0] %>
 	]</span></div>
 	<div class="flex main">
 		<div class="icon for-web"><img src="<%= sys.res %>icon/userlist2.gif" /></div>
