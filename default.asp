@@ -109,7 +109,7 @@ function boot(route) {
 					"ＩＰ地址：" + ( me().roleid > 5 ? x.ip : "已设置保密"),
 					"点击次数：" + x.hits
 				].join("\r\n");
-			}
+			};
 			var isBZ = isBanZhu(forum.forumid);
 			var showPage = function(x) {
 				// 每页显示 12 条回复
@@ -143,6 +143,42 @@ function boot(route) {
 			var isBZ = isBanZhu(topic.forumid);
 			// if(!me().isLogin) dbg().trace(env("REMOTE_ADDR") + "在偷偷查看《" + topic.title + "》");
 			return master(function() { %><!-- #include file="views/topic.html" --><% });
+		}
+
+		// 搜索帖子
+		,search: function() {
+			var par = { key: route[1] }; sys.searchKey = par.key;
+			sys.online.setWeiZhi("forum/search", "搜索帖子：" + par.key, ss().sessId);
+			var online = fromjson(sys.online.data("forum/search"));
+			online.users.guest = online.rows.length - online.users.reg;
+			online.rows.sort(function(a, b) { return b.eTime - a.eTime; });
+			var onlineInfo = function(x) {
+				return [
+					"当前位置：" + x.weizhi,
+					"来访时间：" + tojson(new Date(x.sTime).getVarDate()).slice(1, -1),
+					"活动时间：" + tojson(new Date(x.eTime).getVarDate()).slice(1, -1),
+					"操作系统：" + x.xitong,
+					"ＩＰ地址：" + ( me().roleid > 5 ? x.ip : "已设置保密"),
+					"点击次数：" + x.hits
+				].join("\r\n");
+			};
+			sys.title = "搜索帖子 - " + par.key;
+			var showPage = function(x) {
+				// 每页显示 12 条回复
+				if(x.replynum < 12) return "";
+				var arr = new Array;
+				var page = Math.ceil((x.replynum + 1) / 12);
+				for(var i = 1; i <= page; i++) arr.push(i.toString().link("?r=topic/" + x.topicid + "/" + i));
+				if(page > 7) arr.splice(3, page - 6, "……");
+				return " [第 " + arr.join(" ") + " 页]";
+			};
+			var inReply = db().table("reply z").where("z.topicid=a.topicid and charindex(@key2, z.message)>0").select("top 1 1");
+			par.key2 = par.key;
+			var rows = par.key ? db().table("topic a").where("charindex(@key, title)>0 or exists(" + inReply + ")").select("top 30 a.topicid").astable("a").
+				join("topic b on b.topicid=a.topicid").join("users c on c.userid=b.userid").join("users d on d.userid=b.replyid").
+				join("forums e on e.forumid=b.forumid").select("b.*, c.nick, d.nick as reply, e.nick forumname").
+				orderby("b.ding desc, coalesce(replytime, posttime) desc").query(par) : new Array;
+			return master(function() { %><!-- #include file="views/search.html" --><% });
 		}
 
 		// 论坛 API 接口定义
