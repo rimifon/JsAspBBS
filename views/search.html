@@ -60,6 +60,7 @@ a.blue:before{ content: '[精]'; color: red; font-weight: bold }
 <div class="topic bd mt list">
 	<div class="tc flex cap" style="padding: 0mm">
 		<div class="col c1 for-web">状态</div>
+		<div class="col c2 for-web">版块</div>
 		<div class="col auto">主　题</div>
 		<div class="col c2 for-web">作者</div>
 		<div class="col c3 for-web">回复/点击</div>
@@ -67,6 +68,7 @@ a.blue:before{ content: '[精]'; color: red; font-weight: bold }
 	</div><% rows.forEach(function(x) { %>
 	<div class="main flex">
 		<div class="col c1 <%= x.ding ? 'ding' : 'nonew' %>"></div>
+		<div class="col c2 tc for-web"><a href="?r=forum/<%= x.forumid %>"><%= x.forumname %></a></div>
 		<div class="col auto">
 			<a href="?r=topic/<%= x.topicid %>" class="title <%= x.ding ? 'bold' : x.jing ? 'blue' : 'nml' %>"><%= x.title %></a><%= showPage(x) %>
 		</div>
