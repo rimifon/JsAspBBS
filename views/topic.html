@@ -250,7 +250,7 @@ function runcode(tag) {
 async function scaleImage(file, f) {
 	if(!f) return new Promise(function(ok) { scaleImage(file, ok); });
 	// 判断是否图片类型
-	if(!/^image/i.test(file.type)) return file;
+	if(!/^image/i.test(file.type)) return f(file);
 	var img = new Image, maxWidth = 1280;
 	img.onload = function() {
 		if(img.width <= maxWidth) return f(file);
