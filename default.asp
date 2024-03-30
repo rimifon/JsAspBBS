@@ -509,7 +509,6 @@ function boot(route) {
 						groupby("forumid").astable("z").join("topic a on a.forumid=z.forumid").join("reply b on b.topicid=a.topicid").
 						select("z.topicnum, count(b.replyid) replynum, max(b.replyid) replyid").groupby("z.topicnum").fetch(par);
 					if(!rs) return { err: "版块不存在" };
-					delete rs.forumid;
 					rs.replynum -= rs.topicnum;
 					// 更新到板块中去
 					db().update("forums", rs, par);
