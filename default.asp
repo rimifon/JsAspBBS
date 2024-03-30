@@ -9,6 +9,7 @@ function boot(route) {
 	var roles = [ "客人", "普通会员", "认证会员", "论坛副版主", "论坛版主", "分类区版主", "论坛总版主", "论坛坛主" ];
 	var site = initSite();
 	sys.wxbotkey = site.wxbotkey;
+	sys.nobotuid = site.nobotuid;
 	return apidoc({
 		// 论坛首页
 		index: function() {
@@ -410,11 +411,12 @@ function boot(route) {
 					return site;
 				}
 
-				,SetWxBotCodeDoc: [ "设置企业微信机器人 Key", "key", "key: 企业微信机器人 Key" ]
+				,SetWxBotCodeDoc: [ "设置企业微信机器人 Key", "key, nobotuid", "key: 企业微信机器人 Key", "nobotuid: 禁止通知的用户 ID，多个用逗号分隔" ]
 				,setwxbotcode: function() {
 					if(~~me().roleid < 7) return { err: "没有设置权限" };
 					var site = fromjson(db().scalar("select * from site"));
 					site.wxbotkey = form("key");
+					site.nobotuid = (form("nobotuid") || "").match(/\d+/g);
 					db().query("update site set cfg=@cfg", { cfg: tojson(site) });
 					return site;
 				}
@@ -497,6 +499,21 @@ function boot(route) {
 					if(db().fetch("select top 1 1 from forums where pid=@forumid", par)) return { err: "存在子版块，不可直接删除。" };
 					db().query("delete from forums where forumid=@forumid", par);
 					return { msg: "删除成功" }
+				}
+
+				,ForumStatDoc: [ "更新板块数据统计", "forumid", "更新板块的帖子数和回复数" ]
+				,forumstat: function() {
+					if(~~me().roleid < 7) return { err: "没有权限" };
+					var par = { forumid: ~~form("forumid") };
+					var rs = db().table("topic").where("forumid=@forumid").select("forumid, count(topicid) topicnum").
+						groupby("forumid").astable("z").join("topic a on a.forumid=z.forumid").join("reply b on b.topicid=a.topicid").
+						select("z.topicnum, count(b.replyid) replynum, max(b.replyid) replyid").groupby("z.topicnum").fetch(par);
+					if(!rs) return { err: "版块不存在" };
+					delete rs.forumid;
+					rs.replynum -= rs.topicnum;
+					// 更新到板块中去
+					db().update("forums", rs, par);
+					return rs;
 				}
 			}
 		}
@@ -648,6 +665,9 @@ function fmtMsg(str) {
 // 发送企业微信机器人通知
 function wxBotMsg(msg) {
 	if(!sys.wxbotkey) return;
+	// 如下用户操作时不发送通知
+	var uids = sys.nobotuid || new Array;
+	for(var i = 0; i < uids.length; i++) if(uids[i] == me().userid) return;
 	var data = tojson({ text: { content: msg }, msgtype: "text" });
 	return ajax("https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=" + sys.wxbotkey, data, "application/json");
 }
