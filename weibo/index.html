@@ -368,14 +368,13 @@ function fmtMsg(str) {
 		arrCode.push(code);
 		return "[html=\x01]";
 	});
-	str = str.replace(/\t/g, "    ").replace(/  /g, "&nbsp; ").replace(/\r?\n/g, "<br />\r\n").
-		replace(/\[(.+?)\]\((\w+)\:(.+?)\)/g, '<a href="$2:$3" target="_blank">$1</a>').
-		replace(/\[(b|i|u)\](.+?)\[\/\1\]/g, "<$1>$2</$1>").
-		replace(/\[(b|i|u)\](.+?)\[\/\1\]/g, "<$1>$2</$1>").
-		replace(/\[(b|i|u)\](.+?)\[\/\1\]/g, "<$1>$2</$1>").
+	str = str.replace(/\[(.+?)\]\((\w+)\:(.+?)\)/g, '<a href="$2:$3" target="_blank">$1</a>').
+		replace(/\[(b|i|u|s)\](.+?)\[\/\1\]/g, "<$1>$2</$1>").
+		replace(/\[(b|i|u|s)\](.+?)\[\/\1\]/g, "<$1>$2</$1>").
+		replace(/\[(b|i|u|s)\](.+?)\[\/\1\]/g, "<$1>$2</$1>").
 		replace(/\[color=([\#\w]+)\](.+?)\[\/color\]/g, '<font color="$1">$2</font>').
 		replace(/\[bgcolor=([\#\w]+)\](.+?)\[\/bgcolor\]/g, '<font style="background-color: $1">$2</font>').
-		replace(/\`\`\`([\s\S]+?)\`\`\`/g, "<blockquote>$1</blockquote>").
+		replace(/\r?\n?\`\`\`[\r\n]*([\w\W]+?)[\r\n]*\`\`\`\r?\n?/g, "<blockquote>$1</blockquote>").
 		replace(/\[(image|upload)=([^\]]+)\]/g, function(src, $1, $2) {
 			var file = $2.split("|");
 			return $1 == "image" ? '<div><a href="' + file[0] + '" target="_blank"><img src="' + file[0] + '" alt="' + file[1] + '" /></a></div>'
@@ -383,7 +382,7 @@ function fmtMsg(str) {
 		}).replace(/\[(audio|video)=([^\]]+)\]/g, function(src, $1, $2) {
 			var file = $2.split("|");
 			return '<div><' + $1 + ' src="' + file[0] + '" title="' + file[1] + '" controls="yes"></' + $1 + '></div>';
-		});
+		}).replace(/\t/g, "    ").replace(/  /g, "&nbsp; ").replace(/\r?\n/g, "<br />\r\n");
 	return str.replace(/\[html=\x01\]/g, function() {
 		return '<div class="code"><textarea>' + arrCode.shift() + '</textarea><p class="tr">[您可以先修改代码再运行] <input type="button" value="执行代码" onclick="runcode(parentNode)" /></p></div>';
 	});

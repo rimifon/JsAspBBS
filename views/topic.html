@@ -247,7 +247,7 @@ function runcode(tag) {
 	win.document.write(tag.parentNode.firstChild.value);
 }
 
-async function scaleImage(file, f) {
+function scaleImage(file, f) {
 	if(!f) return new Promise(function(ok) { scaleImage(file, ok); });
 	// 判断是否图片类型
 	if(!/^image/i.test(file.type)) return f(file);

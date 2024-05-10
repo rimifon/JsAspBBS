@@ -216,7 +216,7 @@ function parseSize(num, arr) {
 	num = (num / 1024).toFixed(2) - 0;
 	return arr.shift(), parseSize(num, arr);
 }
-async function scaleImage(file, f) {
+function scaleImage(file, f) {
 	if(!f) return new Promise(function(ok) { scaleImage(file, ok); });
 	// 判断是否图片类型
 	if(!/^image/i.test(file.type)) return f(file);

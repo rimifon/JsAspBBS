@@ -223,7 +223,7 @@ function tojson(obj) {
 	function toObj() {
 		if(!obj) return "null";
 		// if(obj instanceof Array) return toArr();
-		if("length" in obj) return toArr();
+		if("unshift" in obj) return toArr();
 		var arr = new Array;
 		for(var x in obj) arr.push(tojson(x + "") + ":" + tojson(obj[x]));
 		return "{" + arr.join(",") + "}";
