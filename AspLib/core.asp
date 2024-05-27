@@ -87,7 +87,7 @@ function hash_hmac(kind, str, key, isbin) {
 	var utf = new ActiveXObject("System.Text.UTF8Encoding");
 	kind = kind.toUpperCase();
 	var csp = new ActiveXObject("System.Security.Cryptography.HMAC" + kind);
-	csp.Key = utf.GetBytes_4(key);
+	csp.Key = "string" == typeof key ? utf.GetBytes_4(key) : key;
 	var bin = utf.GetBytes_4(str);
 	bin = csp.ComputeHash_2(bin);
 	if(isbin) return bin;
