@@ -36,7 +36,8 @@
 	</div>
 </div>
 <script type="text/javascript">
-var ipt = document.querySelectorAll("input, select, textarea");
+var ipt = [ ...document.querySelectorAll("input, select, textarea") ];
+ipt.shift();	// 干掉搜索框
 ipt[4].onclick = function() {
 	if(!ipt[1].value) return alert("请输入板块名称");
 	post("?r=admin/api/forumSave", {
